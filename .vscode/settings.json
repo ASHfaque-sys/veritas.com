@@ -1,0 +1,10 @@
+{
+  // Enable Deno only for Supabase Edge Functions
+  "deno.enable": true,
+  "deno.enablePaths": ["./supabase/functions"],
+
+  // Disable VS Code's built-in TS validation inside Deno paths
+  // so it doesn't conflict with Deno's type system
+  "deno.lint": true,
+  "deno.unstable": []
+}
