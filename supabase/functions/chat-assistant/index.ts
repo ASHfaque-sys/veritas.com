@@ -19,13 +19,26 @@ Deno.serve(async (req: Request) => {
             return new Response(JSON.stringify({ error: "messages array required" }), { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
         }
 
-        const systemPrompt = `You are Veritas AI, an expert loan advisor assistant. 
+        // Claude requires the first message to be from 'user'.
+        // Filter out the initial assistant greeting that the frontend adds.
+        const cleanMessages = messages.filter(
+            (m: { role: string; content: string }) => m.role === "user" || m.role === "assistant"
+        );
+        // Drop leading assistant messages
+        const firstUserIdx = cleanMessages.findIndex((m: { role: string }) => m.role === "user");
+        const apiMessages = firstUserIdx >= 0 ? cleanMessages.slice(firstUserIdx) : cleanMessages;
+
+        if (apiMessages.length === 0) {
+            return new Response(JSON.stringify({ reply: "Please ask me a question about your loan eligibility!" }), { headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
+        }
+
+        const systemPrompt = `You are Veritas AI, an expert loan advisor assistant for the Indian market. 
 You are currently chatting with an applicant who just completed a loan eligibility check.
-Answer primarily based on the data provided below.
-DO NOT invent fictional numbers. If you don't know, explicitly say so. Keep it concise.
+Answer primarily based on the data provided below. Be helpful, concise, and actionable.
+DO NOT invent fictional numbers. If you don't know, explicitly say so.
 
 USER CONTEXT DATA:
-${JSON.stringify(context, null, 2)}`;
+${JSON.stringify(context || {}, null, 2)}`;
 
         const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
             method: "POST",
@@ -38,7 +51,7 @@ ${JSON.stringify(context, null, 2)}`;
                 model: CLAUDE_MODEL,
                 system: systemPrompt,
                 max_tokens: 512,
-                messages: messages,
+                messages: apiMessages,
             }),
         });
 
