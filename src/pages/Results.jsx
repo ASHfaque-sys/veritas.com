@@ -416,7 +416,17 @@ export default function Results() {
                     </div>
                 </div>
 
-                <FloatingChat context={metrics} />
+                <FloatingChat context={{
+                    loanType,
+                    score,
+                    sessionId,
+                    metrics,
+                    foir: foir ? (foir * 100).toFixed(1) + '%' : null,
+                    dscr: dscr ? dscr.toFixed(2) : null,
+                    improvements: improvements.map(i => i.tip),
+                    recommendedBanks: bankRecs.map(b => b.bank),
+                    summary: `This user applied for a ${loanType} loan and scored ${score}/100 on Veritas AI's eligibility checker.`,
+                }} />
             </main>
         </div>
     )

@@ -5,7 +5,12 @@ import { supabase, isSupabaseConfigured } from '../utils/supabase'
 export default function FloatingChat({ context }) {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: "Hi! I'm your Veritas AI advisor. Ask me anything about your eligibility report." }
+        {
+            role: 'assistant',
+            content: context
+                ? `Hi! I'm your Veritas AI advisor. I have your eligibility report here — ask me anything about your score, why it's high or low, which bank to choose, or how to improve!`
+                : `Hi! I'm your Veritas AI advisor. Ask me anything about loans, CIBIL scores, or how Veritas AI works.`
+        }
     ])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
