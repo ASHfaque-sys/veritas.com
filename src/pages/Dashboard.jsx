@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import { supabase, isSupabaseConfigured } from '../utils/supabase'
-import { FileText, LogOut, ArrowRight, Loader2, DollarSign } from 'lucide-react'
+import { FileText, LogOut, ArrowRight, Loader2, TrendingUp } from 'lucide-react'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function Dashboard() {
     const navigate = useNavigate()
@@ -85,6 +86,28 @@ export default function Dashboard() {
                         Log Out
                     </button>
                 </div>
+
+                {/* Score History Chart */}
+                {assessments.length > 1 && (
+                    <div className="card mb-8">
+                        <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                            <TrendingUp size={18} className="text-indigo-500" />
+                            Score History
+                        </h2>
+                        <ResponsiveContainer width="100%" height={180}>
+                            <LineChart data={[...assessments].reverse().map((a, i) => ({
+                                name: `#${i + 1}`,
+                                score: a.probability_score || 0,
+                            }))}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                                <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+                                <Tooltip formatter={(v) => [`${v}/100`, 'Score']} />
+                                <Line type="monotone" dataKey="score" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', r: 4 }} name="Score" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
 
                 <div className="card">
                     <h2 className="font-semibold text-gray-800 mb-6 flex items-center gap-2">

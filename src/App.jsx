@@ -7,6 +7,8 @@ import Results from './pages/Results'
 import Feedback from './pages/Feedback'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
+import EmiCalculator from './pages/EmiCalculator'
+import Admin from './pages/Admin'
 
 export default function App() {
     return (
@@ -19,6 +21,8 @@ export default function App() {
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/emi-calculator" element={<EmiCalculator />} />
+                <Route path="/admin" element={<Admin />} />
             </Routes>
         </BrowserRouter>
     )
