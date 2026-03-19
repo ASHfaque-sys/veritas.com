@@ -7,6 +7,7 @@ import Results from './pages/Results'
 import Feedback from './pages/Feedback'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
+import FloatingChat from './components/FloatingChat'
 
 export default function App() {
     return (
@@ -20,6 +21,7 @@ export default function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
+            <FloatingChat />
         </BrowserRouter>
     )
 }
