@@ -1,5 +1,5 @@
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
-const GEMINI_MODEL = "gemini-1.5-flash";
+const GEMINI_MODEL = "gemini-2.5-flash";
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
