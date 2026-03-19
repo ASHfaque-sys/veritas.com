@@ -1,7 +1,5 @@
-
-
-const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
-const CLAUDE_MODEL = "claude-3-5-sonnet-20241022";
+const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
+const GEMINI_MODEL = "gemini-1.5-flash";
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -12,7 +10,7 @@ const CORS_HEADERS = {
 // Prompt templates per document type
 function buildPrompt(documentType: string, _loanType: string): string {
     if (documentType === "payslip") {
-        return `You are a financial document analyst. Extract the following from this payslip PDF (base64) and return ONLY valid JSON with no additional text:
+        return `You are a financial document analyst. Extract the following from this payslip PDF and return ONLY valid JSON with no additional text:
 {
   "name": "employee name or null",
   "employer": "company name or null",
@@ -91,7 +89,7 @@ function buildPrompt(documentType: string, _loanType: string): string {
   "total_debits": number or null,
   "emi_obligations_detected": number or null,
   "bounce_count": number or null,
-  "red_flags": ["an array of any major behavioral risks you detect, such as 'Frequent ATM cash withdrawals', 'Declining daily balance', 'Cheque bounces detected', or 'High number of loan obligations', otherwise an empty array if none detect"]
+  "red_flags": ["an array of any major behavioral risks you detect, otherwise an empty array"]
 }`;
     }
 
@@ -114,61 +112,54 @@ Deno.serve(async (req: Request) => {
             );
         }
 
-        if (!ANTHROPIC_API_KEY) {
+        if (!GEMINI_API_KEY) {
             return new Response(
-                JSON.stringify({ error: "ANTHROPIC_API_KEY not configured in Edge Function secrets" }),
+                JSON.stringify({ error: "GEMINI_API_KEY not configured in Edge Function secrets" }),
                 { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
             );
         }
 
-        const systemPrompt = buildPrompt(documentType, loanType || "personal");
+        const textPrompt = buildPrompt(documentType, loanType || "personal");
 
-        // Call Claude Sonnet 4.6 via Anthropic Messages API
-        const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
+        // Call Google Gemini API with inline PDF data
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+
+        const geminiResponse = await fetch(geminiUrl, {
             method: "POST",
-            headers: {
-                "x-api-key": ANTHROPIC_API_KEY,
-                "anthropic-version": "2023-06-01",
-                "anthropic-beta": "pdfs-2024-09-25",
-                "content-type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                model: CLAUDE_MODEL,
-                max_tokens: 1024,
-                messages: [
+                contents: [
                     {
-                        role: "user",
-                        content: [
+                        parts: [
+                            { text: textPrompt },
                             {
-                                type: "text",
-                                text: systemPrompt,
-                            },
-                            {
-                                type: "document",
-                                source: {
-                                    type: "base64",
-                                    media_type: "application/pdf",
+                                inline_data: {
+                                    mime_type: "application/pdf",
                                     data: base64File,
                                 },
                             },
                         ],
                     },
                 ],
+                generationConfig: {
+                    temperature: 0.1,
+                    maxOutputTokens: 1024,
+                },
             }),
         });
 
-        if (!anthropicResponse.ok) {
-            const errBody = await anthropicResponse.text();
+        if (!geminiResponse.ok) {
+            const errBody = await geminiResponse.text();
             return new Response(
-                JSON.stringify({ error: "Claude API error", details: errBody }),
+                JSON.stringify({ error: "Gemini API error", details: errBody }),
                 { status: 502, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
             );
         }
 
-        const claudeData = await anthropicResponse.json();
-        const rawText = claudeData.content?.[0]?.text ?? "{}";
+        const geminiData = await geminiResponse.json();
+        const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
 
-        // Parse JSON safely — Claude should return only JSON
+        // Parse JSON safely — Gemini should return only JSON
         let parsedData: Record<string, unknown> = {};
         try {
             // Strip any markdown code fences if present

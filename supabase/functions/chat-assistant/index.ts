@@ -1,5 +1,5 @@
-const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
-const CLAUDE_MODEL = "claude-3-5-sonnet-20241022";
+const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
+const GEMINI_MODEL = "gemini-1.5-flash";
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -19,20 +19,25 @@ Deno.serve(async (req: Request) => {
             return new Response(JSON.stringify({ error: "messages array required" }), { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
         }
 
-        // Claude requires the first message to be from 'user'.
-        // Filter out the initial assistant greeting that the frontend adds.
-        const cleanMessages = messages.filter(
-            (m: { role: string; content: string }) => m.role === "user" || m.role === "assistant"
-        );
-        // Drop leading assistant messages
-        const firstUserIdx = cleanMessages.findIndex((m: { role: string }) => m.role === "user");
-        const apiMessages = firstUserIdx >= 0 ? cleanMessages.slice(firstUserIdx) : cleanMessages;
+        if (!GEMINI_API_KEY) {
+            return new Response(JSON.stringify({ error: "GEMINI_API_KEY not configured" }), { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
+        }
+
+        // Filter out leading assistant messages (Gemini requires first message to be 'user')
+        const firstUserIdx = messages.findIndex((m: { role: string }) => m.role === "user");
+        const apiMessages = firstUserIdx >= 0 ? messages.slice(firstUserIdx) : messages;
 
         if (apiMessages.length === 0) {
             return new Response(JSON.stringify({ reply: "Please ask me a question about your loan eligibility!" }), { headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
         }
 
-        const systemPrompt = `You are Veritas AI, an expert loan advisor assistant for the Indian market. 
+        // Convert messages to Gemini format (role: 'user'/'model')
+        const geminiContents = apiMessages.map((m: { role: string; content: string }) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+        }));
+
+        const systemInstruction = `You are Veritas AI, an expert loan advisor assistant for the Indian market. 
 You are currently chatting with an applicant who just completed a loan eligibility check.
 Answer primarily based on the data provided below. Be helpful, concise, and actionable.
 DO NOT invent fictional numbers. If you don't know, explicitly say so.
@@ -40,28 +45,30 @@ DO NOT invent fictional numbers. If you don't know, explicitly say so.
 USER CONTEXT DATA:
 ${JSON.stringify(context || {}, null, 2)}`;
 
-        const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+
+        const geminiResponse = await fetch(geminiUrl, {
             method: "POST",
-            headers: {
-                "x-api-key": ANTHROPIC_API_KEY,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                model: CLAUDE_MODEL,
-                system: systemPrompt,
-                max_tokens: 512,
-                messages: apiMessages,
+                systemInstruction: {
+                    parts: [{ text: systemInstruction }],
+                },
+                contents: geminiContents,
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 512,
+                },
             }),
         });
 
-        if (!anthropicResponse.ok) {
-            const errBody = await anthropicResponse.text();
-            throw new Error(`Claude API error: ${errBody}`);
+        if (!geminiResponse.ok) {
+            const errBody = await geminiResponse.text();
+            throw new Error(`Gemini API error: ${errBody}`);
         }
 
-        const claudeData = await anthropicResponse.json();
-        const replyText = claudeData.content?.[0]?.text ?? "";
+        const geminiData = await geminiResponse.json();
+        const replyText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
         return new Response(JSON.stringify({ reply: replyText }), { headers: { ...CORS_HEADERS, "Content-Type": "application/json" } });
     } catch (err) {
