@@ -9,6 +9,7 @@ create extension if not exists vector;
 -- 2. assessments table
 create table if not exists public.assessments (
   session_id       uuid primary key default gen_random_uuid(),
+  user_id          uuid,
   loan_type        text not null check (loan_type in ('personal', 'business')),
   extracted_data   jsonb,
   probability_score integer,

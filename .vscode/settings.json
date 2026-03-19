@@ -6,5 +6,12 @@
   // Disable VS Code's built-in TS validation inside Deno paths
   // so it doesn't conflict with Deno's type system
   "deno.lint": true,
-  "deno.unstable": []
+  "deno.unstable": [],
+
+  // Suppress false-positive "Unknown at rule @tailwind" warnings
+  "css.validate": false,
+  "scss.validate": false,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

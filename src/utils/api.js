@@ -16,7 +16,10 @@ export async function analyseDocument(base64File, documentType, loanType) {
         body: { base64File, documentType, loanType },
     })
 
-    if (error) throw new Error(error.message)
+    if (error) {
+        console.error('Edge Function Error:', error)
+        throw new Error(error.message || 'Unknown error from edge function')
+    }
     return data
 }
 
@@ -28,8 +31,12 @@ export async function saveAssessment({ loanType, extractedData, probabilityScore
         return { session_id: `demo-${Date.now()}` }
     }
 
-    const { data: userData } = await supabase.auth.getUser()
-    const userId = userData?.user?.id || null
+    // Get user_id if logged in (optional — anonymous submissions still work)
+    let userId = null
+    try {
+        const { data: userData } = await supabase.auth.getUser()
+        userId = userData?.user?.id || null
+    } catch (_) { /* not logged in */ }
 
     const { data, error } = await supabase
         .from('assessments')
