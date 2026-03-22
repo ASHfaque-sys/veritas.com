@@ -1,206 +1,173 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { ArrowRight, User, Briefcase, Shield, TrendingUp, Star, Upload, BarChart2, Building2, CheckCircle2, Quote } from 'lucide-react'
-
-const FEATURES = [
-    { icon: <Shield size={18} />, text: 'Bank-grade security' },
-    { icon: <TrendingUp size={18} />, text: 'Real approval data' },
-    { icon: <Star size={18} />, text: 'AI-powered insights' },
-]
-
-const HOW_IT_WORKS = [
-    {
-        step: '01',
-        icon: <User size={22} className="text-indigo-600" />,
-        title: 'Tell us about yourself',
-        desc: 'Enter your income, CIBIL score, loan amount, and employment details. Takes under 2 minutes.',
-    },
-    {
-        step: '02',
-        icon: <Upload size={22} className="text-gold" />,
-        title: 'Upload your documents',
-        desc: "Optionally upload payslips, ITR, or bank statements. Our AI reads them and fills your data automatically.",
-    },
-    {
-        step: '03',
-        icon: <BarChart2 size={22} className="text-emerald-600" />,
-        title: 'Get your eligibility score',
-        desc: 'Receive an instant eligibility score out of 100, based on the same parameters real bank underwriters use.',
-    },
-    {
-        step: '04',
-        icon: <Building2 size={22} className="text-indigo-500" />,
-        title: 'See matched lenders',
-        desc: 'Get personalised bank recommendations with estimated approval rates — and apply directly on their portal.',
-    },
-]
-
-const TRUST_BADGES = [
-    { icon: '🔒', label: '256-bit SSL' },
-    { icon: '🚫', label: 'No CIBIL pull' },
-    { icon: '🙅', label: 'Data never sold' },
-    { icon: '⚡', label: 'Instant results' },
-    { icon: '🆓', label: 'Always free' },
-]
 
 export default function Home() {
     const navigate = useNavigate()
 
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') })
+        }, { threshold: 0.08 })
+        
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+        
+        return () => observer.disconnect()
+    }, [])
+
     return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="bg-white text-navy font-sans overflow-x-hidden">
             <Navbar />
 
-            <main className="flex-1 w-full fade-in">
-                {/* ── Hero ── */}
-                <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12 md:py-20 text-center">
-                    <h1 className="font-serif text-4xl md:text-6xl text-gray-900 leading-tight mb-5">
-                        Know your loan odds<br />
-                        <span className="text-gold italic">before you apply</span>
-                    </h1>
-                    <p className="text-gray-500 text-lg max-w-xl mx-auto leading-relaxed">
-                        Upload your documents and get an instant, AI-powered eligibility score — plus personalised tips and matched lenders.
-                    </p>
+            {/* TICKER */}
+            <div className="ticker">
+                <div className="ticker-inner">
+                    <span className="ticker-item">256-bit SSL Encrypted</span>
+                    <span className="ticker-item">No CIBIL Pull</span>
+                    <span className="ticker-item">Data Never Sold</span>
+                    <span className="ticker-item">Instant Results</span>
+                    <span className="ticker-item">Always Free</span>
+                    <span className="ticker-item">30+ Loan Types</span>
+                    <span className="ticker-item">AI-Powered Analysis</span>
+                    <span className="ticker-item">256-bit SSL Encrypted</span>
+                    <span className="ticker-item">No CIBIL Pull</span>
+                    <span className="ticker-item">Data Never Sold</span>
+                    <span className="ticker-item">Instant Results</span>
+                    <span className="ticker-item">Always Free</span>
+                    <span className="ticker-item">30+ Loan Types</span>
+                    <span className="ticker-item">AI-Powered Analysis</span>
+                </div>
+            </div>
 
-                    {/* Badge */}
-                    <div className="flex justify-center mt-6">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gold/8 border border-gold/25 rounded-full">
-                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs font-semibold text-gold">
-                                Powered by real approval data
-                            </span>
-                        </div>
+            {/* HERO */}
+            <section className="hero">
+                <div className="hero-left">
+                    <div>
+                        <div className="hero-kicker">Breaking: Know before you apply</div>
+                        <h1 className="hero-headline">
+                            Know<br />your<br />loan<br /><em>odds.</em>
+                        </h1>
+                        <p className="hero-deck">
+                            Upload your documents and get an instant, AI-powered eligibility score — plus personalised tips and matched lenders.
+                        </p>
                     </div>
+                    <div className="hero-cta-group w-fit">
+                        <button onClick={() => navigate('/personal-loan')} className="hero-btn-primary">Check My Eligibility <span>→</span></button>
+                        <a href="#how-it-works" className="hero-btn-secondary">How It Works <span>↓</span></a>
+                    </div>
+                    <div className="hero-vol">01</div>
+                </div>
 
-                    {/* Trust badges */}
-                    <div className="flex flex-wrap justify-center gap-3 mt-5 mb-8">
-                        {TRUST_BADGES.map((b) => (
-                            <div key={b.label} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-gray-200 text-sm text-gray-600 shadow-sm">
-                                <span>{b.icon}</span>{b.label}
-                            </div>
-                        ))}
+                <div className="hero-right">
+                    <div className="hero-right-feature">
+                        <span className="feat-label">Feature · AI Analysis</span>
+                        <h2 className="feat-title">Your eligibility score, calculated the way bankers do it.</h2>
+                        <p className="feat-body">Veritas AI uses the same financial parameters real bank underwriters apply — DSCR, FOIR, income multiples — to give you a score out of 100 before you step into a branch. No guesswork. No surprises.</p>
                     </div>
+                    <div className="trust-strip">
+                        <div className="trust-item"><span className="trust-icon">🔒</span><span className="trust-text">256-bit SSL</span></div>
+                        <div className="trust-item"><span className="trust-icon">🚫</span><span className="trust-text">No CIBIL Pull</span></div>
+                        <div className="trust-item"><span className="trust-icon">🛡️</span><span class="trust-text">Data Never Sold</span></div>
+                        <div className="trust-item"><span className="trust-icon">⚡</span><span class="trust-text">Instant Results</span></div>
+                        <div className="trust-item"><span className="trust-icon">🆓</span><span class="trust-text">Always Free</span></div>
+                    </div>
+                </div>
+            </section>
 
-                    {/* Hero CTA */}
-                    <div className="flex justify-center mb-16">
-                        <button onClick={() => navigate('/personal-loan')}
-                            className="px-8 py-3.5 bg-gold hover:bg-yellow-500 text-white font-bold rounded-xl shadow-[0_8px_20px_-6px_rgba(217,119,6,0.5)] transition-all flex items-center gap-2 text-lg">
-                            Check My Eligibility <ArrowRight size={20} />
-                        </button>
-                    </div>
+            {/* LOAN CARDS */}
+            <div className="loan-section reveal">
+                <button onClick={() => navigate('/personal-loan')} className="loan-col text-left">
+                    <div className="loan-col-num">Section 01</div>
+                    <span className="loan-col-icon">👤</span>
+                    <h2 className="loan-col-title">Personal<br /><span>Loan</span></h2>
+                    <p className="loan-col-body">Salaried or self-employed? Check eligibility with CIBIL score, income analysis and payslip verification.</p>
+                    <ul className="loan-features">
+                        <li>CIBIL Score Analysis</li>
+                        <li>Income & EMI Check</li>
+                        <li>Payslip + ITR Verification</li>
+                    </ul>
+                    <span className="loan-cta-link">Check Eligibility →</span>
+                </button>
 
-                    {/* Loan type cards */}
-                    <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                        <button id="personal-loan-card" onClick={() => navigate('/personal-loan')}
-                            className="group text-left bg-white rounded-xl3 border border-gray-100 shadow-card hover:shadow-hover hover:border-gold/30 transition-all duration-300 p-8 overflow-hidden relative">
-                            <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-gradient-to-br from-gold/10 to-gold/5 group-hover:scale-125 transition-transform duration-500" />
-                            <div className="relative">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center mb-5 group-hover:from-gold group-hover:to-gold-700 group-hover:shadow-gold transition-all duration-300">
-                                    <User size={26} className="text-gold group-hover:text-white transition-colors duration-300" />
-                                </div>
-                                <h2 className="font-serif text-2xl text-gray-900 mb-2">Personal Loan</h2>
-                                <p className="text-sm text-gray-500 leading-relaxed mb-6">Salaried or self-employed? Check eligibility with CIBIL score, income analysis and payslip verification.</p>
-                                <div className="space-y-2 mb-6">
-                                    {['CIBIL score analysis', 'Income & EMI check', 'Payslip + ITR verification'].map(t => (
-                                        <div key={t} className="flex items-center gap-2 text-xs text-gray-500">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-gold" />{t}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs text-gray-400">Loan range</p>
-                                        <p className="text-sm font-semibold text-gray-700">₹50K – ₹50 Lakh</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold group-hover:shadow-gold transition-all duration-300">
-                                        <ArrowRight size={18} className="text-gold group-hover:text-white transition-colors duration-300" />
-                                    </div>
-                                </div>
-                            </div>
-                        </button>
+                <button onClick={() => navigate('/business-loan')} className="loan-col text-left">
+                    <div className="loan-col-num">Section 02</div>
+                    <span className="loan-col-icon">💼</span>
+                    <h2 className="loan-col-title">Business<br /><span>Loan</span></h2>
+                    <p className="loan-col-body">Term loans, working capital, LAP and more. AI reads your financials for a bank-ready eligibility score.</p>
+                    <ul className="loan-features">
+                        <li>8 Loan Type Categories</li>
+                        <li>DSCR & Turnover Analysis</li>
+                        <li>Balance Sheet + ITR Check</li>
+                    </ul>
+                    <span className="loan-cta-link">Check Eligibility →</span>
+                </button>
+            </div>
 
-                        <button id="business-loan-card" onClick={() => navigate('/business-loan')}
-                            className="group text-left bg-white rounded-xl3 border border-gray-100 shadow-card hover:shadow-hover hover:border-gold/30 transition-all duration-300 p-8 overflow-hidden relative">
-                            <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 group-hover:scale-125 transition-transform duration-500" />
-                            <div className="relative">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-100 to-blue-50 flex items-center justify-center mb-5 group-hover:from-gold group-hover:to-gold-700 group-hover:shadow-gold transition-all duration-300">
-                                    <Briefcase size={26} className="text-indigo-500 group-hover:text-white transition-colors duration-300" />
-                                </div>
-                                <h2 className="font-serif text-2xl text-gray-900 mb-2">Business Loan</h2>
-                                <p className="text-sm text-gray-500 leading-relaxed mb-6">Term loans, working capital, LAP and more. AI reads your financials for a bank-ready eligibility score.</p>
-                                <div className="space-y-2 mb-6">
-                                    {['8 loan type categories', 'DSCR & turnover analysis', 'Balance sheet + ITR check'].map(t => (
-                                        <div key={t} className="flex items-center gap-2 text-xs text-gray-500">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />{t}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-xs text-gray-400">Loan range</p>
-                                        <p className="text-sm font-semibold text-gray-700">₹5 Lakh – ₹10 Cr</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center group-hover:bg-gold group-hover:shadow-gold transition-all duration-300">
-                                        <ArrowRight size={18} className="text-indigo-500 group-hover:text-white transition-colors duration-300" />
-                                    </div>
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-                </section>
+            {/* STATS */}
+            <div className="stats-section reveal">
+                <div className="stat-col">
+                    <div className="stat-num">30+</div>
+                    <div className="stat-label">Loan Types Covered</div>
+                </div>
+                <div className="stat-col">
+                    <div className="stat-num">2min</div>
+                    <div className="stat-label">Average Completion Time</div>
+                </div>
+                <div className="stat-col">
+                    <div className="stat-num">100%</div>
+                    <div className="stat-label">Free, Always</div>
+                </div>
+            </div>
 
-                {/* ── How it Works ── */}
-                <section className="bg-white border-y border-gray-100 py-16">
-                    <div className="max-w-5xl mx-auto px-4 sm:px-6">
-                        <div className="text-center mb-12">
-                            <p className="text-xs font-bold text-gold uppercase tracking-widest mb-2">Simple Process</p>
-                            <h2 className="font-serif text-3xl md:text-4xl text-gray-900">How Veritas AI works</h2>
-                        </div>
-                        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-                            {HOW_IT_WORKS.map((item, i) => (
-                                <div key={i} className="relative flex flex-col items-center text-center p-6 rounded-2xl bg-gray-50 hover:bg-indigo-50/30 transition-colors">
-                                    <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-gold text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                                        {item.step}
-                                    </div>
-                                    <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mb-4">
-                                        {item.icon}
-                                    </div>
-                                    <h3 className="font-semibold text-gray-800 mb-2 text-sm">{item.title}</h3>
-                                    <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
-                                    {i < HOW_IT_WORKS.length - 1 && (
-                                        <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-gray-200 text-xl font-bold">›</div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+            {/* HOW IT WORKS */}
+            <section id="how-it-works" className="how-section reveal">
+                <div className="how-header flex-col md:flex-row gap-4 md:gap-8">
+                    <h2 className="how-title">How It Works</h2>
+                    <p className="how-subtitle">Four steps to know your approval odds</p>
+                </div>
+                <div className="how-grid">
+                    <div className="how-step">
+                        <div className="how-step-ghost">01</div>
+                        <span className="how-step-icon">👤</span>
+                        <h4 className="how-step-title">Tell us about yourself</h4>
+                        <p className="how-step-desc">Enter your income, CIBIL score, loan amount, and employment details. Takes under 2 minutes.</p>
                     </div>
-                </section>
+                    <div className="how-step">
+                        <div className="how-step-ghost">02</div>
+                        <span className="how-step-icon">📤</span>
+                        <h4 className="how-step-title">Upload your documents</h4>
+                        <p className="how-step-desc">Optionally upload payslips, ITR, or bank statements. Our AI reads and fills your data automatically.</p>
+                    </div>
+                    <div className="how-step">
+                        <div className="how-step-ghost">03</div>
+                        <span className="how-step-icon">📊</span>
+                        <h4 className="how-step-title">Get your eligibility score</h4>
+                        <p className="how-step-desc">Receive an instant score out of 100, based on the same parameters real bank underwriters use.</p>
+                    </div>
+                    <div className="how-step">
+                        <div className="how-step-ghost">04</div>
+                        <span className="how-step-icon">🏦</span>
+                        <h4 className="how-step-title">See matched lenders</h4>
+                        <p className="how-step-desc">Get personalised bank recommendations with estimated approval rates — apply directly on their portal.</p>
+                    </div>
+                </div>
+            </section>
 
-                {/* ── Bottom CTA ── */}
-                <section className="bg-gradient-to-br from-indigo-600 to-indigo-800 py-14 text-center text-white mx-4 sm:mx-6 rounded-2xl mb-8 max-w-5xl md:mx-auto shadow-xl relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-10">
-                        {[...Array(6)].map((_, i) => (
-                            <div key={i} className="absolute rounded-full border border-white" style={{ width: `${80 + i * 60}px`, height: `${80 + i * 60}px`, top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
-                        ))}
+            {/* CTA */}
+            <section className="cta-section">
+                <div className="cta-grid-bg"></div>
+                <div className="cta-glow"></div>
+                <div className="cta-inner reveal">
+                    <div className="cta-kicker">Free Forever</div>
+                    <h2 className="cta-title">Ready to check<br />your <span>eligibility?</span></h2>
+                    <p className="cta-sub">Built for Indian borrowers. Free, private, and instant.</p>
+                    <div className="cta-btn-row flex-col sm:flex-row">
+                        <button onClick={() => navigate('/personal-loan')} className="btn-cta-electric w-full sm:w-auto">Personal Loan →</button>
+                        <button onClick={() => navigate('/business-loan')} className="btn-cta-white w-full sm:w-auto">Business Loan →</button>
                     </div>
-                    <div className="relative">
-                        <p className="text-xs font-bold tracking-widest uppercase text-indigo-200 mb-2">Free forever</p>
-                        <h2 className="font-serif text-3xl md:text-4xl mb-4">Ready to check your eligibility?</h2>
-                        <p className="text-indigo-200 text-sm mb-8 max-w-md mx-auto">Built for Indian borrowers. Free, private, and instant.</p>
-                        <div className="flex gap-4 justify-center flex-wrap">
-                            <button onClick={() => navigate('/personal-loan')}
-                                className="px-8 py-3 bg-gold hover:bg-yellow-500 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center gap-2">
-                                Personal Loan <ArrowRight size={16} />
-                            </button>
-                            <button onClick={() => navigate('/business-loan')}
-                                className="px-8 py-3 bg-white hover:bg-gray-50 text-indigo-900 font-bold rounded-xl shadow-lg transition-colors flex items-center gap-2">
-                                Business Loan <ArrowRight size={16} />
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            </main>
+                </div>
+            </section>
 
             <Footer />
         </div>

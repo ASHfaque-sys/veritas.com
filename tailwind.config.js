@@ -7,6 +7,27 @@ export default {
     theme: {
         extend: {
             colors: {
+                navy: {
+                    DEFAULT: '#0b1629',
+                    mid: '#122040',
+                    light: '#1e3260',
+                    dim: '#2a4080',
+                },
+                electric: {
+                    DEFAULT: '#2563eb',
+                    bright: '#3b82f6',
+                    pale: '#dbeafe',
+                },
+                rule: {
+                    DEFAULT: '#d0daf0',
+                    dark: '#1e3260',
+                },
+                offwhite: {
+                    DEFAULT: '#ffffff',
+                    off: '#f4f7ff',
+                    dim: '#c8d4ee',
+                    faint: '#7a8fbc',
+                },
                 gold: {
                     50: '#fdf8ee',
                     100: '#f9f0d6',
@@ -31,8 +52,10 @@ export default {
                 danger: '#ef4444',
             },
             fontFamily: {
-                serif: ['"DM Serif Display"', 'Georgia', 'serif'],
-                sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+                serif: ['"Cormorant Garamond"', 'serif'],
+                sans: ['Karla', 'system-ui', 'sans-serif'],
+                mono: ['"IBM Plex Mono"', 'monospace'],
+                display: ['"Bebas Neue"', 'sans-serif'],
             },
             borderRadius: {
                 xl2: '1.25rem',

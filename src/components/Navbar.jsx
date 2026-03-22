@@ -1,15 +1,11 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Zap } from 'lucide-react'
-
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 
 export default function Navbar() {
-    const location = useLocation()
-    const isHome = location.pathname === '/'
-    const [user, setUser] = React.useState(null)
+    const [user, setUser] = useState(null)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!supabase) return
         
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -24,34 +20,20 @@ export default function Navbar() {
     }, [])
 
     return (
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-                {/* Logo */}
-                <Link to="/" className="flex items-center gap-2.5 group">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gold to-gold-700 flex items-center justify-center shadow-gold">
-                        <Zap size={18} className="text-white fill-white" />
-                    </div>
-                    <span className="font-serif text-xl text-gray-900 group-hover:text-gold transition-colors">
-                        Veritas <span className="text-gold">AI</span>
-                    </span>
-                </Link>
-
-                <div className="flex items-center gap-3">
-                    {/* Auth Nav */}
-                    <Link to="/emi-calculator" className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors hidden sm:block">
-                        EMI Calc
-                    </Link>
-                    {user ? (
-                        <Link to="/dashboard" className="text-sm font-semibold text-gray-700 hover:text-indigo-600 transition-colors">
-                            Dashboard
-                        </Link>
-                    ) : (
-                        <Link to="/auth" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
-                            Log In
-                        </Link>
-                    )}
-                </div>
-            </div>
+        <header className="masthead">
+            <span className="masthead-date">India · Est. 2024 · Free Forever</span>
+            <Link to="/" className="masthead-logo block decoration-transparent hover:opacity-90 transition-opacity">
+                <div className="masthead-logo-text">Veritas <span>AI</span></div>
+                <div className="masthead-logo-tagline">Smart Loan Eligibility · Powered by Real Approval Data</div>
+            </Link>
+            <nav className="masthead-nav">
+                <Link to="/emi-calculator">EMI Calc</Link>
+                {user ? (
+                    <Link to="/dashboard" className="nav-pill">Dashboard →</Link>
+                ) : (
+                    <Link to="/auth" className="nav-pill">Log In →</Link>
+                )}
+            </nav>
         </header>
     )
 }
