@@ -37,30 +37,6 @@ const HOW_IT_WORKS = [
     },
 ]
 
-const TESTIMONIALS = [
-    {
-        name: 'Ravi M.',
-        location: 'Mumbai',
-        role: 'Marketing Manager',
-        text: "I was rejected twice before I found Veritas AI. It told me my FOIR was too high and which bank to try instead. Got approved at Axis Bank the next week!",
-        stars: 5,
-    },
-    {
-        name: 'Priya S.',
-        location: 'Bengaluru',
-        role: 'Business Owner',
-        text: "Uploaded my balance sheet and ITR and got a full analysis in seconds. The AI told me exactly what the bank would flag — saved me months of trial and error.",
-        stars: 5,
-    },
-    {
-        name: 'Arjun K.',
-        location: 'Hyderabad',
-        role: 'Software Engineer',
-        text: "The CIBIL simulator showed me that improving my score by 50 points would boost my eligibility significantly. Super helpful and completely free!",
-        stars: 5,
-    },
-]
-
 const TRUST_BADGES = [
     { icon: '🔒', label: '256-bit SSL' },
     { icon: '🚫', label: 'No CIBIL pull' },
@@ -180,36 +156,6 @@ export default function Home() {
                                 </div>
                             ))}
                         </div>
-                    </div>
-                </section>
-
-                {/* ── Testimonials ── */}
-                <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-                    <div className="text-center mb-12">
-                        <p className="text-xs font-bold text-gold uppercase tracking-widest mb-2">User Stories</p>
-                        <h2 className="font-serif text-3xl md:text-4xl text-gray-900">What our users say</h2>
-                    </div>
-                    <div className="grid sm:grid-cols-3 gap-6">
-                        {TESTIMONIALS.map((t, i) => (
-                            <div key={i} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-card flex flex-col hover:shadow-hover transition-shadow">
-                                <Quote size={20} className="text-gold/40 mb-3" />
-                                <p className="text-sm text-gray-600 leading-relaxed flex-1 italic mb-4">"{t.text}"</p>
-                                <div className="flex items-center gap-1 mb-3">
-                                    {Array.from({ length: t.stars }).map((_, j) => (
-                                        <Star key={j} size={12} className="text-gold fill-gold" />
-                                    ))}
-                                </div>
-                                <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
-                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-100 to-gold/20 flex items-center justify-center text-sm font-bold text-indigo-600">
-                                        {t.name.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-semibold text-gray-800">{t.name}</p>
-                                        <p className="text-xs text-gray-400">{t.role} · {t.location}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
                     </div>
                 </section>
 
