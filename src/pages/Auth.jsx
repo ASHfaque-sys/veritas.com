@@ -120,7 +120,46 @@ export default function Auth() {
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center">
+                    <div className="mt-8 mb-6 relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-3 bg-white text-gray-400">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <button 
+                            onClick={async () => {
+                                await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/dashboard' } })
+                            }}
+                            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
+                            Google
+                        </button>
+                        <button 
+                            onClick={async () => {
+                                await supabase.auth.signInWithOAuth({ provider: 'facebook', options: { redirectTo: window.location.origin + '/dashboard' } })
+                            }}
+                            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-[#1877F2] border border-[#1877F2] rounded-xl text-sm font-semibold text-white hover:bg-[#166FE5] transition-colors shadow-sm"
+                        >
+                            <img src="https://facebook.com/favicon.ico" alt="Facebook" className="w-4 h-4 rounded-sm bg-white" />
+                            Facebook
+                        </button>
+                        <button 
+                            onClick={async () => {
+                                await supabase.auth.signInWithOAuth({ provider: 'azure', options: { redirectTo: window.location.origin + '/dashboard' } })
+                            }}
+                            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            <img src="https://www.microsoft.com/favicon.ico" alt="Microsoft" className="w-4 h-4" />
+                            Microsoft
+                        </button>
+                    </div>
+
+                    <div className="mt-8 text-center pt-6 border-t border-gray-100">
                         <button 
                             type="button"
                             onClick={() => {
@@ -130,7 +169,7 @@ export default function Auth() {
                             }}
                             className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
                         >
-                            {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+                            {isLogin ? "Don't have an account? Sign up with Email" : 'Already have an account? Sign in with Email'}
                         </button>
                     </div>
                 </div>
@@ -138,3 +177,4 @@ export default function Auth() {
         </div>
     )
 }
+
