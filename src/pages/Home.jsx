@@ -1,12 +1,72 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
-import { ArrowRight, User, Briefcase, Shield, TrendingUp, Star } from 'lucide-react'
+import Footer from '../components/Footer'
+import { ArrowRight, User, Briefcase, Shield, TrendingUp, Star, Upload, BarChart2, Building2, CheckCircle2, Quote } from 'lucide-react'
 
 const FEATURES = [
     { icon: <Shield size={18} />, text: 'Bank-grade security' },
     { icon: <TrendingUp size={18} />, text: 'Real approval data' },
     { icon: <Star size={18} />, text: 'AI-powered insights' },
+]
+
+const HOW_IT_WORKS = [
+    {
+        step: '01',
+        icon: <User size={22} className="text-indigo-600" />,
+        title: 'Tell us about yourself',
+        desc: 'Enter your income, CIBIL score, loan amount, and employment details. Takes under 2 minutes.',
+    },
+    {
+        step: '02',
+        icon: <Upload size={22} className="text-gold" />,
+        title: 'Upload your documents',
+        desc: "Optionally upload payslips, ITR, or bank statements. Our AI reads them and fills your data automatically.",
+    },
+    {
+        step: '03',
+        icon: <BarChart2 size={22} className="text-emerald-600" />,
+        title: 'Get your eligibility score',
+        desc: 'Receive an instant eligibility score out of 100, based on the same parameters real bank underwriters use.',
+    },
+    {
+        step: '04',
+        icon: <Building2 size={22} className="text-indigo-500" />,
+        title: 'See matched lenders',
+        desc: 'Get personalised bank recommendations with estimated approval rates — and apply directly on their portal.',
+    },
+]
+
+const TESTIMONIALS = [
+    {
+        name: 'Ravi M.',
+        location: 'Mumbai',
+        role: 'Marketing Manager',
+        text: "I was rejected twice before I found Veritas AI. It told me my FOIR was too high and which bank to try instead. Got approved at Axis Bank the next week!",
+        stars: 5,
+    },
+    {
+        name: 'Priya S.',
+        location: 'Bengaluru',
+        role: 'Business Owner',
+        text: "Uploaded my balance sheet and ITR and got a full analysis in seconds. The AI told me exactly what the bank would flag — saved me months of trial and error.",
+        stars: 5,
+    },
+    {
+        name: 'Arjun K.',
+        location: 'Hyderabad',
+        role: 'Software Engineer',
+        text: "The CIBIL simulator showed me that improving my score by 50 points would boost my eligibility significantly. Super helpful and completely free!",
+        stars: 5,
+    },
+]
+
+const TRUST_BADGES = [
+    { icon: '🔒', label: '256-bit SSL' },
+    { icon: '🚫', label: 'No CIBIL pull' },
+    { icon: '🙅', label: 'Data never sold' },
+    { icon: '⚡', label: 'Instant results' },
+    { icon: '🆓', label: 'Always free' },
 ]
 
 export default function Home() {
@@ -16,10 +76,9 @@ export default function Home() {
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
 
-            {/* Hero */}
-            <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 md:py-20 fade-in">
-                {/* Headline */}
-                <div className="text-center mb-14">
+            <main className="flex-1 w-full fade-in">
+                {/* ── Hero ── */}
+                <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12 md:py-20 text-center">
                     <h1 className="font-serif text-4xl md:text-6xl text-gray-900 leading-tight mb-5">
                         Know your loan odds<br />
                         <span className="text-gold italic">before you apply</span>
@@ -28,104 +87,158 @@ export default function Home() {
                         Upload your documents and get an instant, AI-powered eligibility score — plus personalised tips and matched lenders.
                     </p>
 
-                    {/* Feature chips */}
-                    <div className="flex flex-wrap justify-center gap-3 mt-6">
-                        {FEATURES.map((f, i) => (
-                            <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-gray-200 text-sm text-gray-600 shadow-sm">
-                                <span className="text-gold">{f.icon}</span>
-                                {f.text}
+                    {/* Trust badges */}
+                    <div className="flex flex-wrap justify-center gap-3 mt-6 mb-12">
+                        {TRUST_BADGES.map((b) => (
+                            <div key={b.label} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-gray-200 text-sm text-gray-600 shadow-sm">
+                                <span>{b.icon}</span>{b.label}
                             </div>
                         ))}
                     </div>
-                </div>
 
-                {/* Cards */}
-                <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                    {/* Personal Loan Card */}
-                    <button
-                        id="personal-loan-card"
-                        onClick={() => navigate('/personal-loan')}
-                        className="group text-left bg-white rounded-xl3 border border-gray-100 shadow-card hover:shadow-hover hover:border-gold/30 transition-all duration-300 p-8 overflow-hidden relative"
-                    >
-                        {/* Decorative circle */}
-                        <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-gradient-to-br from-gold/10 to-gold/5 group-hover:scale-125 transition-transform duration-500" />
-
-                        <div className="relative">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center mb-5 group-hover:from-gold group-hover:to-gold-700 group-hover:shadow-gold transition-all duration-300">
-                                <User size={26} className="text-gold group-hover:text-white transition-colors duration-300" />
-                            </div>
-
-                            <h2 className="font-serif text-2xl text-gray-900 mb-2">Personal Loan</h2>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                                Salaried or self-employed? Check eligibility with CIBIL score, income analysis and payslip verification.
-                            </p>
-
-                            <div className="space-y-2 mb-6">
-                                {['CIBIL score analysis', 'Income & EMI check', 'Payslip + ITR verification'].map(t => (
-                                    <div key={t} className="flex items-center gap-2 text-xs text-gray-500">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-gold" />
-                                        {t}
+                    {/* Loan type cards */}
+                    <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                        <button id="personal-loan-card" onClick={() => navigate('/personal-loan')}
+                            className="group text-left bg-white rounded-xl3 border border-gray-100 shadow-card hover:shadow-hover hover:border-gold/30 transition-all duration-300 p-8 overflow-hidden relative">
+                            <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-gradient-to-br from-gold/10 to-gold/5 group-hover:scale-125 transition-transform duration-500" />
+                            <div className="relative">
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold/20 to-gold/10 flex items-center justify-center mb-5 group-hover:from-gold group-hover:to-gold-700 group-hover:shadow-gold transition-all duration-300">
+                                    <User size={26} className="text-gold group-hover:text-white transition-colors duration-300" />
+                                </div>
+                                <h2 className="font-serif text-2xl text-gray-900 mb-2">Personal Loan</h2>
+                                <p className="text-sm text-gray-500 leading-relaxed mb-6">Salaried or self-employed? Check eligibility with CIBIL score, income analysis and payslip verification.</p>
+                                <div className="space-y-2 mb-6">
+                                    {['CIBIL score analysis', 'Income & EMI check', 'Payslip + ITR verification'].map(t => (
+                                        <div key={t} className="flex items-center gap-2 text-xs text-gray-500">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-gold" />{t}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-xs text-gray-400">Loan range</p>
+                                        <p className="text-sm font-semibold text-gray-700">₹50K – ₹50 Lakh</p>
                                     </div>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs text-gray-400">Loan range</p>
-                                    <p className="text-sm font-semibold text-gray-700">₹50K – ₹50 Lakh</p>
-                                </div>
-                                <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold group-hover:shadow-gold transition-all duration-300">
-                                    <ArrowRight size={18} className="text-gold group-hover:text-white transition-colors duration-300" />
-                                </div>
-                            </div>
-                        </div>
-                    </button>
-
-                    {/* Business Loan Card */}
-                    <button
-                        id="business-loan-card"
-                        onClick={() => navigate('/business-loan')}
-                        className="group text-left bg-white rounded-xl3 border border-gray-100 shadow-card hover:shadow-hover hover:border-gold/30 transition-all duration-300 p-8 overflow-hidden relative"
-                    >
-                        <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 group-hover:scale-125 transition-transform duration-500" />
-
-                        <div className="relative">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-100 to-blue-50 flex items-center justify-center mb-5 group-hover:from-gold group-hover:to-gold-700 group-hover:shadow-gold transition-all duration-300">
-                                <Briefcase size={26} className="text-indigo-500 group-hover:text-white transition-colors duration-300" />
-                            </div>
-
-                            <h2 className="font-serif text-2xl text-gray-900 mb-2">Business Loan</h2>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                                Term loans, working capital, LAP and more. AI reads your financials for a bank-ready eligibility score.
-                            </p>
-
-                            <div className="space-y-2 mb-6">
-                                {['8 loan type categories', 'DSCR & turnover analysis', 'Balance sheet + ITR check'].map(t => (
-                                    <div key={t} className="flex items-center gap-2 text-xs text-gray-500">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-                                        {t}
+                                    <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold group-hover:shadow-gold transition-all duration-300">
+                                        <ArrowRight size={18} className="text-gold group-hover:text-white transition-colors duration-300" />
                                     </div>
-                                ))}
+                                </div>
                             </div>
+                        </button>
 
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs text-gray-400">Loan range</p>
-                                    <p className="text-sm font-semibold text-gray-700">₹5 Lakh – ₹10 Cr</p>
+                        <button id="business-loan-card" onClick={() => navigate('/business-loan')}
+                            className="group text-left bg-white rounded-xl3 border border-gray-100 shadow-card hover:shadow-hover hover:border-gold/30 transition-all duration-300 p-8 overflow-hidden relative">
+                            <div className="absolute -top-8 -right-8 w-36 h-36 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 group-hover:scale-125 transition-transform duration-500" />
+                            <div className="relative">
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-100 to-blue-50 flex items-center justify-center mb-5 group-hover:from-gold group-hover:to-gold-700 group-hover:shadow-gold transition-all duration-300">
+                                    <Briefcase size={26} className="text-indigo-500 group-hover:text-white transition-colors duration-300" />
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center group-hover:bg-gold group-hover:shadow-gold transition-all duration-300">
-                                    <ArrowRight size={18} className="text-indigo-500 group-hover:text-white transition-colors duration-300" />
+                                <h2 className="font-serif text-2xl text-gray-900 mb-2">Business Loan</h2>
+                                <p className="text-sm text-gray-500 leading-relaxed mb-6">Term loans, working capital, LAP and more. AI reads your financials for a bank-ready eligibility score.</p>
+                                <div className="space-y-2 mb-6">
+                                    {['8 loan type categories', 'DSCR & turnover analysis', 'Balance sheet + ITR check'].map(t => (
+                                        <div key={t} className="flex items-center gap-2 text-xs text-gray-500">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />{t}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-xs text-gray-400">Loan range</p>
+                                        <p className="text-sm font-semibold text-gray-700">₹5 Lakh – ₹10 Cr</p>
+                                    </div>
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center group-hover:bg-gold group-hover:shadow-gold transition-all duration-300">
+                                        <ArrowRight size={18} className="text-indigo-500 group-hover:text-white transition-colors duration-300" />
+                                    </div>
                                 </div>
                             </div>
+                        </button>
+                    </div>
+                </section>
+
+                {/* ── How it Works ── */}
+                <section className="bg-white border-y border-gray-100 py-16">
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6">
+                        <div className="text-center mb-12">
+                            <p className="text-xs font-bold text-gold uppercase tracking-widest mb-2">Simple Process</p>
+                            <h2 className="font-serif text-3xl md:text-4xl text-gray-900">How Veritas AI works</h2>
                         </div>
-                    </button>
-                </div>
+                        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+                            {HOW_IT_WORKS.map((item, i) => (
+                                <div key={i} className="relative flex flex-col items-center text-center p-6 rounded-2xl bg-gray-50 hover:bg-indigo-50/30 transition-colors">
+                                    <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-gold text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                                        {item.step}
+                                    </div>
+                                    <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mb-4">
+                                        {item.icon}
+                                    </div>
+                                    <h3 className="font-semibold text-gray-800 mb-2 text-sm">{item.title}</h3>
+                                    <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                                    {i < HOW_IT_WORKS.length - 1 && (
+                                        <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-gray-200 text-xl font-bold">›</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
 
-                {/* Footer note */}
-                <p className="text-center text-xs text-gray-400 mt-10">
-                    Your data is processed securely and never shared with third parties without consent.
-                </p>
+                {/* ── Testimonials ── */}
+                <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
+                    <div className="text-center mb-12">
+                        <p className="text-xs font-bold text-gold uppercase tracking-widest mb-2">User Stories</p>
+                        <h2 className="font-serif text-3xl md:text-4xl text-gray-900">What our users say</h2>
+                    </div>
+                    <div className="grid sm:grid-cols-3 gap-6">
+                        {TESTIMONIALS.map((t, i) => (
+                            <div key={i} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-card flex flex-col hover:shadow-hover transition-shadow">
+                                <Quote size={20} className="text-gold/40 mb-3" />
+                                <p className="text-sm text-gray-600 leading-relaxed flex-1 italic mb-4">"{t.text}"</p>
+                                <div className="flex items-center gap-1 mb-3">
+                                    {Array.from({ length: t.stars }).map((_, j) => (
+                                        <Star key={j} size={12} className="text-gold fill-gold" />
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-100 to-gold/20 flex items-center justify-center text-sm font-bold text-indigo-600">
+                                        {t.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-800">{t.name}</p>
+                                        <p className="text-xs text-gray-400">{t.role} · {t.location}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* ── Bottom CTA ── */}
+                <section className="bg-gradient-to-br from-indigo-600 to-indigo-800 py-14 text-center text-white mx-4 sm:mx-6 rounded-2xl mb-16 max-w-5xl md:mx-auto shadow-xl relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-10">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="absolute rounded-full border border-white" style={{ width: `${80 + i * 60}px`, height: `${80 + i * 60}px`, top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
+                        ))}
+                    </div>
+                    <div className="relative">
+                        <p className="text-xs font-bold tracking-widest uppercase text-indigo-200 mb-2">Free forever</p>
+                        <h2 className="font-serif text-3xl md:text-4xl mb-4">Ready to check your eligibility?</h2>
+                        <p className="text-indigo-200 text-sm mb-8 max-w-md mx-auto">Join thousands of borrowers who used Veritas AI to get approved faster and smarter.</p>
+                        <div className="flex gap-4 justify-center flex-wrap">
+                            <button onClick={() => navigate('/personal-loan')}
+                                className="px-8 py-3 bg-gold hover:bg-yellow-500 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center gap-2">
+                                Personal Loan <ArrowRight size={16} />
+                            </button>
+                            <button onClick={() => navigate('/business-loan')}
+                                className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-colors border border-white/20 flex items-center gap-2">
+                                Business Loan <ArrowRight size={16} />
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </main>
+
+            <Footer />
         </div>
     )
 }
