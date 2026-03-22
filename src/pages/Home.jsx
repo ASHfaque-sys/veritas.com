@@ -63,13 +63,31 @@ export default function Home() {
                         Upload your documents and get an instant, AI-powered eligibility score — plus personalised tips and matched lenders.
                     </p>
 
+                    {/* Badge */}
+                    <div className="flex justify-center mt-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gold/8 border border-gold/25 rounded-full">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-xs font-semibold text-gold">
+                                Powered by real approval data
+                            </span>
+                        </div>
+                    </div>
+
                     {/* Trust badges */}
-                    <div className="flex flex-wrap justify-center gap-3 mt-6 mb-12">
+                    <div className="flex flex-wrap justify-center gap-3 mt-5 mb-8">
                         {TRUST_BADGES.map((b) => (
                             <div key={b.label} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-gray-200 text-sm text-gray-600 shadow-sm">
                                 <span>{b.icon}</span>{b.label}
                             </div>
                         ))}
+                    </div>
+
+                    {/* Hero CTA */}
+                    <div className="flex justify-center mb-16">
+                        <button onClick={() => navigate('/personal-loan')}
+                            className="px-8 py-3.5 bg-gold hover:bg-yellow-500 text-white font-bold rounded-xl shadow-[0_8px_20px_-6px_rgba(217,119,6,0.5)] transition-all flex items-center gap-2 text-lg">
+                            Check My Eligibility <ArrowRight size={20} />
+                        </button>
                     </div>
 
                     {/* Loan type cards */}
@@ -160,7 +178,7 @@ export default function Home() {
                 </section>
 
                 {/* ── Bottom CTA ── */}
-                <section className="bg-gradient-to-br from-indigo-600 to-indigo-800 py-14 text-center text-white mx-4 sm:mx-6 rounded-2xl mb-16 max-w-5xl md:mx-auto shadow-xl relative overflow-hidden">
+                <section className="bg-gradient-to-br from-indigo-600 to-indigo-800 py-14 text-center text-white mx-4 sm:mx-6 rounded-2xl mb-8 max-w-5xl md:mx-auto shadow-xl relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10">
                         {[...Array(6)].map((_, i) => (
                             <div key={i} className="absolute rounded-full border border-white" style={{ width: `${80 + i * 60}px`, height: `${80 + i * 60}px`, top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
@@ -169,14 +187,14 @@ export default function Home() {
                     <div className="relative">
                         <p className="text-xs font-bold tracking-widest uppercase text-indigo-200 mb-2">Free forever</p>
                         <h2 className="font-serif text-3xl md:text-4xl mb-4">Ready to check your eligibility?</h2>
-                        <p className="text-indigo-200 text-sm mb-8 max-w-md mx-auto">Join thousands of borrowers who used Veritas AI to get approved faster and smarter.</p>
+                        <p className="text-indigo-200 text-sm mb-8 max-w-md mx-auto">Built for Indian borrowers. Free, private, and instant.</p>
                         <div className="flex gap-4 justify-center flex-wrap">
                             <button onClick={() => navigate('/personal-loan')}
                                 className="px-8 py-3 bg-gold hover:bg-yellow-500 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center gap-2">
                                 Personal Loan <ArrowRight size={16} />
                             </button>
                             <button onClick={() => navigate('/business-loan')}
-                                className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-colors border border-white/20 flex items-center gap-2">
+                                className="px-8 py-3 bg-white hover:bg-gray-50 text-indigo-900 font-bold rounded-xl shadow-lg transition-colors flex items-center gap-2">
                                 Business Loan <ArrowRight size={16} />
                             </button>
                         </div>

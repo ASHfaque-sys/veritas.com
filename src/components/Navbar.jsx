@@ -37,14 +37,6 @@ export default function Navbar() {
                 </Link>
 
                 <div className="flex items-center gap-3">
-                    {/* Badge */}
-                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gold/8 border border-gold/25 rounded-full mr-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-xs font-semibold text-gold">
-                            Powered by real approval data
-                        </span>
-                    </div>
-
                     {/* Auth Nav */}
                     <Link to="/emi-calculator" className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors hidden sm:block">
                         EMI Calc
