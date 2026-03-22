@@ -1,5 +1,6 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { supabase, isSupabaseConfigured } from './utils/supabase'
 import Home from './pages/Home'
 import PersonalLoan from './pages/PersonalLoan'
 import BusinessLoan from './pages/BusinessLoan'
@@ -10,19 +11,70 @@ import Dashboard from './pages/Dashboard'
 import EmiCalculator from './pages/EmiCalculator'
 import Admin from './pages/Admin'
 
+// Shows a spinner while we check the session
+function LoadingScreen() {
+    return (
+        <div className="min-h-screen bg-cream flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                <p className="text-sm text-gray-400 font-medium">Loading…</p>
+            </div>
+        </div>
+    )
+}
+
+// Wraps any route — redirects to /auth if not signed in
+function ProtectedRoute({ user, loading, children }) {
+    if (loading) return <LoadingScreen />
+    if (!user) return <Navigate to="/auth" replace />
+    return children
+}
+
 export default function App() {
+    const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        if (!isSupabaseConfigured()) {
+            setLoading(false)
+            return
+        }
+        // Get current session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user || null)
+            setLoading(false)
+        })
+        // Listen for sign-in / sign-out
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user || null)
+        })
+        return () => subscription.unsubscribe()
+    }, [])
+
+    const protect = (element) => (
+        <ProtectedRoute user={user} loading={loading}>
+            {element}
+        </ProtectedRoute>
+    )
+
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/personal-loan" element={<PersonalLoan />} />
-                <Route path="/business-loan" element={<BusinessLoan />} />
-                <Route path="/results" element={<Results />} />
-                <Route path="/feedback" element={<Feedback />} />
+                {/* Public route — login/register */}
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/emi-calculator" element={<EmiCalculator />} />
-                <Route path="/admin" element={<Admin />} />
+
+                {/* All other routes require sign-in */}
+                <Route path="/"               element={protect(<Home />)} />
+                <Route path="/personal-loan"  element={protect(<PersonalLoan />)} />
+                <Route path="/business-loan"  element={protect(<BusinessLoan />)} />
+                <Route path="/results"        element={protect(<Results />)} />
+                <Route path="/feedback"       element={protect(<Feedback />)} />
+                <Route path="/dashboard"      element={protect(<Dashboard />)} />
+                <Route path="/emi-calculator" element={protect(<EmiCalculator />)} />
+                <Route path="/admin"          element={protect(<Admin />)} />
+
+                {/* Catch-all → home (will redirect to /auth if not signed in) */}
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
     )
