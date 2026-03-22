@@ -1,3 +1,4 @@
+@import './styles/dark-theme.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -161,5 +162,4 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-@import './styles/dark-theme.css';
 
