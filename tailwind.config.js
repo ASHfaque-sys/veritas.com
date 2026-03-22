@@ -7,27 +7,20 @@ export default {
     theme: {
         extend: {
             colors: {
-                navy: {
-                    DEFAULT: '#0b1629',
-                    mid: '#122040',
-                    light: '#1e3260',
-                    dim: '#2a4080',
+                void: '#0d0d0d',
+                near: '#141414',
+                surface: '#1c1c1c',
+                lift: '#242424',
+                lime: {
+                    DEFAULT: '#c8f135',
+                    2: '#a8d420',
+                    dim: '#3a4a0a',
                 },
-                electric: {
-                    DEFAULT: '#2563eb',
-                    bright: '#3b82f6',
-                    pale: '#dbeafe',
-                },
-                rule: {
-                    DEFAULT: '#d0daf0',
-                    dark: '#1e3260',
-                },
-                offwhite: {
-                    DEFAULT: '#ffffff',
-                    off: '#f4f7ff',
-                    dim: '#c8d4ee',
-                    faint: '#7a8fbc',
-                },
+                white: '#f5f5f0',
+                muted: '#888880',
+                faint: '#333330',
+                orange: '#ff6b35',
+                line: '#2a2a2a',
                 gold: {
                     50: '#fdf8ee',
                     100: '#f9f0d6',
@@ -52,10 +45,10 @@ export default {
                 danger: '#ef4444',
             },
             fontFamily: {
+                sans: ['Epilogue', 'system-ui', 'sans-serif'],
+                display: ['Syne', 'sans-serif'],
+                mono: ['"Syne Mono"', 'monospace'],
                 serif: ['"Cormorant Garamond"', 'serif'],
-                sans: ['Karla', 'system-ui', 'sans-serif'],
-                mono: ['"IBM Plex Mono"', 'monospace'],
-                display: ['"Bebas Neue"', 'sans-serif'],
             },
             borderRadius: {
                 xl2: '1.25rem',

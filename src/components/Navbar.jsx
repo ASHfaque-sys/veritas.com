@@ -20,20 +20,20 @@ export default function Navbar() {
     }, [])
 
     return (
-        <header className="masthead">
-            <span className="masthead-date">India · Est. 2024 · Free Forever</span>
-            <Link to="/" className="masthead-logo block decoration-transparent hover:opacity-90 transition-opacity">
-                <div className="masthead-logo-text">Veritas <span>AI</span></div>
-                <div className="masthead-logo-tagline">Smart Loan Eligibility · Powered by Real Approval Data</div>
+        <nav className="fixed top-0 left-0 right-0 z-[100] px-6 md:px-10 h-16 flex items-center justify-between bg-void/85 backdrop-blur-md border-b border-line">
+            <Link to="/" className="nav-logo">
+                <div className="nav-logo-mark">V</div>
+                <span className="nav-logo-name">Veritas <span>AI</span></span>
             </Link>
-            <nav className="masthead-nav">
-                <Link to="/emi-calculator">EMI Calc</Link>
+            <div className="nav-pill-badge hidden md:flex">Live · Real Approval Data</div>
+            <div className="nav-right">
+                <Link to="/emi-calculator" className="nav-link hidden sm:block">EMI Calc</Link>
                 {user ? (
-                    <Link to="/dashboard" className="nav-pill">Dashboard →</Link>
+                    <Link to="/dashboard" className="nav-btn">Dashboard →</Link>
                 ) : (
-                    <Link to="/auth" className="nav-pill">Log In →</Link>
+                    <Link to="/auth" className="nav-btn">Sign In →</Link>
                 )}
-            </nav>
-        </header>
+            </div>
+        </nav>
     )
 }
