@@ -91,33 +91,101 @@ export function scoreBusinessLoan({
     yearsInBusiness,
     netProfit,
     depreciation,
+    totalAssets,
+    currentAssets,
+    currentLiabilities
 }) {
     let total = 0
+    let insights = {}
 
-    // CIBIL weight: 25 pts
+    // CIBIL weight: 20 pts
     const cibilPct = (cibilScore - 300) / 600
-    total += cibilPct * 25
+    total += cibilPct * 20
 
-    // DSCR weight: 30 pts
+    // DSCR weight: 25 pts
     const annualEMI = existingEMI * 12
-    const dscr = calcDscr(netProfit || annualTurnover * 0.15, depreciation || 0, annualEMI)
-    if (dscr !== null && annualEMI > 0) {
-        total += dscr >= 1.5 ? 30 : dscr >= 1.25 ? 20 : dscr >= 1.0 ? 10 : 2
+    const baseDscr = calcDscr(netProfit || annualTurnover * 0.15, depreciation || 0, annualEMI)
+    if (baseDscr !== null && annualEMI > 0) {
+        total += baseDscr >= 1.5 ? 25 : baseDscr >= 1.25 ? 15 : baseDscr >= 1.0 ? 5 : 0
     } else {
-        total += 15
+        total += 10
     }
 
-    // Loan-to-turnover ratio weight: 20 pts
+    // Loan-to-turnover ratio weight: 15 pts
     const ltvRatio = loanAmount / annualTurnover
-    total += ltvRatio <= 0.3 ? 20 : ltvRatio <= 0.5 ? 14 : ltvRatio <= 0.7 ? 7 : 2
+    total += ltvRatio <= 0.3 ? 15 : ltvRatio <= 0.5 ? 10 : ltvRatio <= 0.7 ? 5 : 0
 
-    // Business vintage weight: 15 pts
-    total += yearsInBusiness >= 5 ? 15 : yearsInBusiness >= 3 ? 10 : yearsInBusiness >= 2 ? 6 : 2
+    // Business vintage weight: 10 pts
+    total += yearsInBusiness >= 5 ? 10 : yearsInBusiness >= 3 ? 7 : yearsInBusiness >= 2 ? 4 : 0
 
-    // Income base weight: 10 pts
-    total += annualTurnover >= 5000000 ? 10 : annualTurnover >= 2000000 ? 7 : 4
+    // Income base weight: 5 pts
+    total += annualTurnover >= 5000000 ? 5 : annualTurnover >= 2000000 ? 3 : 1
 
-    return Math.min(100, Math.max(0, Math.round(total)))
+    // ========================================================================
+    // ENTERPRISE BANKING ALGORITHMS
+    // ========================================================================
+
+    // 1. Nayak Committee MPBF (Maximum Permissible Bank Finance)
+    const mpbfLimit = annualTurnover * 0.20
+    const mpbfStatus = loanAmount <= mpbfLimit ? 'approved' : 'rejected'
+    insights.mpbf = { limit: mpbfLimit, status: mpbfStatus }
+    if (loanAmount > mpbfLimit) total -= 15
+
+    // 2. Altman Z-Score For Private Firms
+    const TA = totalAssets || annualTurnover * 0.5
+    const CA = currentAssets || annualTurnover * 0.3
+    const CL = currentLiabilities || annualTurnover * 0.2
+    const TL = CL + loanAmount
+    const WC = CA - CL
+    const EBIT = netProfit + depreciation
+    
+    // Z' = 0.717*T1 + 0.847*T2 + 3.107*T3 + 0.420*T4 + 0.998*T5
+    const z1 = 0.717 * (WC / TA)
+    const z2 = 0.847 * ((netProfit * yearsInBusiness) / TA)
+    const z3 = 3.107 * (EBIT / TA)
+    const z4 = 0.420 * (TA / TL)
+    const z5 = 0.998 * (annualTurnover / TA)
+    const zScore = z1 + z2 + z3 + z4 + z5
+    
+    let zZone = 'distress'
+    if (zScore > 2.9) {
+        zZone = 'safe'; total += 15
+    } else if (zScore >= 1.23) {
+        zZone = 'grey'; total += 5
+    } else {
+        total -= 25
+    }
+    insights.zScore = { score: Math.round(zScore * 100)/100, zone: zZone }
+
+    // 3. Stressed DSCR (Interest Rate Shock +2%)
+    const stressedAnnualEMI = annualEMI * 1.07 // roughly 7% EMI jump for 2% rate jump
+    const stressedDscr = calcDscr(netProfit || annualTurnover * 0.15, depreciation || 0, stressedAnnualEMI)
+    let stressedZone = 'safe'
+    if (stressedDscr !== null && stressedAnnualEMI > 0) {
+        if (stressedDscr < 1.15) {
+            stressedZone = 'danger'
+            total -= 10
+        }
+    }
+    insights.stressedDscr = { ratio: stressedDscr !== null ? Math.round(stressedDscr * 100)/100 : null, zone: stressedZone }
+
+    // 4. Liquidity Test (Current Ratio)
+    const currentRatio = CL > 0 ? (CA / CL) : 2.0
+    let liquidityZone = 'healthy'
+    if (currentRatio < 1.0) {
+        liquidityZone = 'insolvent'
+        total -= 15
+    } else if (currentRatio < 1.33) {
+        liquidityZone = 'tight'
+    } else {
+        total += 5
+    }
+    insights.liquidity = { ratio: Math.round(currentRatio * 100)/100, zone: liquidityZone }
+
+    return { 
+        score: Math.min(100, Math.max(0, Math.round(total))),
+        insights
+    }
 }
 
 // ─── Generic score → colour ───────────────────────────────────────────────

@@ -11,6 +11,7 @@ import {
 import { generatePDFReport } from '../utils/pdfReport'
 import { TrendingDown, Lightbulb, Building2, MessageSquarePlus, ChevronRight, AlertCircle, Info, Share2, CheckSquare, Square, Sliders, Download } from 'lucide-react'
 import FloatingChat from '../components/FloatingChat'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts'
 
 // ── Bank approval rates by score bracket ────────────────────────────────────
 const BANK_APPROVAL_RATES = {
@@ -232,6 +233,12 @@ export default function Results() {
                         )}
                     </div>
                 </div>
+
+                {/* ── Enterprise Risk Analytics ── */}
+                {loanType === 'business' && metrics.insights && (
+                    <EnterpriseRiskCard insights={metrics.insights} />
+                )}
+
                 {/* ── Factors Hurting Validation / Red Flags ── */}
                 <div className="card mb-6">
                     <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -500,6 +507,69 @@ export default function Results() {
                 }} />
             </main>
             <MobileBottomNav />
+        </div>
+    )
+}
+
+// ── Enterprise Risk Card ───────────────────────────────────────────────────────
+function EnterpriseRiskCard({ insights }) {
+    if (!insights) return null
+    return (
+        <div className="card mb-6 border-2 border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-white">
+            <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <Building2 size={18} className="text-indigo-600" />
+                Enterprise Risk Analytics
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+                {insights.zScore && (
+                    <div className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Altman Z-Score</p>
+                        <div className="flex justify-between items-end mb-2">
+                            <span className="text-2xl font-bold text-gray-800">{insights.zScore.score}</span>
+                            <span className={`text-xs font-bold px-2 py-1 rounded ${insights.zScore.zone === 'safe' ? 'bg-emerald-100 text-emerald-700' : insights.zScore.zone === 'distress' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                                {insights.zScore.zone.toUpperCase()}
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-500">Corporate bankruptcy prediction model. (&lt;1.23 = Distress, &gt;2.9 = Safe)</p>
+                    </div>
+                )}
+                {insights.mpbf && (
+                    <div className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Nayak Comm. MPBF Limit</p>
+                        <div className="flex justify-between items-end mb-2">
+                            <span className="text-xl font-bold text-gray-800">₹{Number(insights.mpbf.limit).toLocaleString('en-IN')}</span>
+                            <span className={`text-xs font-bold px-2 py-1 rounded ${insights.mpbf.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                {insights.mpbf.status.toUpperCase()}
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-500">Maximum Permissible Bank Finance (20% of projected turnover).</p>
+                    </div>
+                )}
+                {insights.liquidity && (
+                    <div className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Current Ratio (Liquidity)</p>
+                        <div className="flex justify-between items-end mb-2">
+                            <span className="text-xl font-bold text-gray-800">{insights.liquidity.ratio}x</span>
+                            <span className={`text-xs font-bold px-2 py-1 rounded ${insights.liquidity.zone === 'healthy' ? 'bg-emerald-100 text-emerald-700' : insights.liquidity.zone === 'insolvent' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                                {insights.liquidity.zone.toUpperCase()}
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-500">Short-term solvency test (Current Assets / Current Liabilities). Target &gt; 1.33x</p>
+                    </div>
+                )}
+                {insights.stressedDscr && (
+                    <div className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Stressed DSCR</p>
+                        <div className="flex justify-between items-end mb-2">
+                            <span className="text-xl font-bold text-gray-800">{insights.stressedDscr.ratio || '—'}</span>
+                            <span className={`text-xs font-bold px-2 py-1 rounded ${insights.stressedDscr.zone === 'safe' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                {insights.stressedDscr.zone.toUpperCase()}
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-500">Debt coverage ratio simulated with a +2% interest rate shock.</p>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

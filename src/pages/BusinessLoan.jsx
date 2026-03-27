@@ -93,6 +93,9 @@ export default function BusinessLoan() {
         loanAmount: '',
         existingEMI: '',
         cibilScore: '700',
+        totalAssets: '',
+        currentAssets: '',
+        currentLiabilities: '',
     })
     const [balanceSheet, setBalanceSheet] = useState(null)
     const [itrPnl, setItrPnl] = useState(null)
@@ -161,12 +164,15 @@ export default function BusinessLoan() {
                 yearsInBusiness: numYears,
                 netProfit: numProfit,
                 depreciation: numDeprec,
+                totalAssets: Number(form.totalAssets) || numTurnover * 0.5,
+                currentAssets: Number(form.currentAssets) || numTurnover * 0.3,
+                currentLiabilities: Number(form.currentLiabilities) || numTurnover * 0.2,
             })
 
             const sessionData = await saveAssessment({
                 loanType: 'business',
-                extractedData: { ...form, loanTypeChosen: activeLoanType, ...extractedData },
-                probabilityScore: score,
+                extractedData: { ...form, loanTypeChosen: activeLoanType, ...extractedData, algorithmInsights: score.insights },
+                probabilityScore: score.score,
             })
 
             navigate('/results', {
@@ -188,6 +194,7 @@ export default function BusinessLoan() {
                         businessType: form.businessType,
                         industry: form.industry,
                         redFlags: extractedData.bankStatements?.red_flags || [],
+                        insights: score.insights,
                     },
                 },
             })
@@ -344,6 +351,25 @@ export default function BusinessLoan() {
                             <div>
                                 <label className="label-base">Promoter CIBIL Score</label>
                                 <input id="business-cibil" type="number" min="300" max="900" placeholder="700" value={form.cibilScore} onChange={e => setField('cibilScore', e.target.value)} className="input-base" />
+                            </div>
+                        </div>
+
+                        {/* Enterprise Financials */}
+                        <div className="pt-4 mt-2 border-t border-gray-100">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-1.5"><Info size={14} className="text-indigo-500" /> Advanced Financials (For Bank MPBF Calculation)</h3>
+                            <div className="grid sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="label-base">Total Assets (₹)</label>
+                                    <input type="number" placeholder="Estimated if unknown" value={form.totalAssets} onChange={e => setField('totalAssets', e.target.value)} className="input-base" />
+                                </div>
+                                <div>
+                                    <label className="label-base">Current Assets (₹)</label>
+                                    <input title="Cash, Inventory, Receivables" type="number" placeholder="Short-term assets" value={form.currentAssets} onChange={e => setField('currentAssets', e.target.value)} className="input-base" />
+                                </div>
+                                <div>
+                                    <label className="label-base">Current Liab. (₹)</label>
+                                    <input title="Short-term debt, Payables" type="number" placeholder="Short-term debt" value={form.currentLiabilities} onChange={e => setField('currentLiabilities', e.target.value)} className="input-base" />
+                                </div>
                             </div>
                         </div>
                     </div>
