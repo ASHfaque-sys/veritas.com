@@ -64,7 +64,7 @@ export default function EmiCalculator() {
     return (
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
-            <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-10 fade-in">
+            <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <div className="flex items-center gap-3 mb-1">
                     <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
                         <Calculator size={20} className="text-indigo-600" />
@@ -160,7 +160,7 @@ export default function EmiCalculator() {
                     </div>
                 </div>
 
-                {/* Yearly Amortization */}
+                {/* Yearly Amortization line chart */}
                 {schedule.length > 1 && (
                     <div className="card mb-6">
                         <h2 className="font-semibold text-gray-800 mb-4">Yearly Outstanding Balance</h2>
@@ -173,6 +173,35 @@ export default function EmiCalculator() {
                                 <Line type="monotone" dataKey="balance" stroke="#6366f1" strokeWidth={2} dot={false} name="Balance" />
                             </LineChart>
                         </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Yearly Amortization Table */}
+                {schedule.length > 0 && (
+                    <div className="card mb-8">
+                        <h2 className="font-semibold text-gray-800 mb-4">Yearly Amortization Schedule</h2>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-gray-200">
+                                        <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Year</th>
+                                        <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Principal Paid</th>
+                                        <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Interest Paid</th>
+                                        <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Closing Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {schedule.map((row) => (
+                                        <tr key={row.year} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                            <td className="py-3 px-4 text-sm font-medium text-gray-900">{row.year}</td>
+                                            <td className="py-3 px-4 text-sm text-gray-600">{fmtINR(row.principal)}</td>
+                                            <td className="py-3 px-4 text-sm text-gray-600">{fmtINR(row.interest)}</td>
+                                            <td className="py-3 px-4 text-sm text-indigo-600 font-medium">{fmtINR(row.balance)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
 

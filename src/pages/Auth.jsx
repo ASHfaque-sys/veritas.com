@@ -53,7 +53,7 @@ export default function Auth() {
     return (
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
-            <main className="flex-1 max-w-md mx-auto w-full px-4 sm:px-6 py-16 fade-in">
+            <main className="flex-1 max-w-md mx-auto w-full px-4 sm:px-6 pt-24 pb-16 fade-in">
                 <div className="card p-8">
                     <div className="text-center mb-8">
                         <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -138,24 +138,6 @@ export default function Auth() {
                         >
                             <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
                             Google
-                        </button>
-                        <button 
-                            onClick={async () => {
-                                await supabase.auth.signInWithOAuth({ provider: 'facebook', options: { redirectTo: window.location.origin + '/dashboard' } })
-                            }}
-                            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-[#1877F2] border border-[#1877F2] rounded-xl text-sm font-semibold text-white hover:bg-[#166FE5] transition-colors shadow-sm"
-                        >
-                            <img src="https://facebook.com/favicon.ico" alt="Facebook" className="w-4 h-4 rounded-sm bg-white" />
-                            Facebook
-                        </button>
-                        <button 
-                            onClick={async () => {
-                                await supabase.auth.signInWithOAuth({ provider: 'azure', options: { redirectTo: window.location.origin + '/dashboard' } })
-                            }}
-                            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-                        >
-                            <img src="https://www.microsoft.com/favicon.ico" alt="Microsoft" className="w-4 h-4" />
-                            Microsoft
                         </button>
                     </div>
 

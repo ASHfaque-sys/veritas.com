@@ -107,7 +107,7 @@ export default function Feedback() {
     return (
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
-            <main className="flex-1 max-w-lg mx-auto w-full px-4 sm:px-6 py-10 fade-in">
+            <main className="flex-1 max-w-lg mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <button
                     onClick={() => navigate(-1)}
                     className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 mb-6 transition-colors"

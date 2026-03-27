@@ -161,22 +161,56 @@ export function getBusinessImprovements({ dscr, yearsInBusiness, ltvRatio }) {
     return tips
 }
 
-// ─── Static bank recommendations (fallback without pgvector) ─────────────
-export function getStaticBankRecs(loanType, score) {
+// ─── Static bank recommendations (Matchmaker logic) ─────────────
+export function getStaticBankRecs(loanType, score, cibil = 700) {
     const personal = [
-        { bank: 'HDFC Bank', product: 'Personal Loan', rate: '10.75% – 14.50%', maxAmount: '₹40 Lakh', minCibil: 750, link: 'https://v1.hdfcbank.com/borrow/popular-loans/personal-loan' },
-        { bank: 'SBI', product: 'SBI Xpress Credit', rate: '11.15% – 15.30%', maxAmount: '₹20 Lakh', minCibil: 700, link: 'https://sbi.co.in/web/personal-banking/loans/personal-loans/xpress-credit' },
-        { bank: 'ICICI Bank', product: 'Personal Loan', rate: '10.85% – 16.25%', maxAmount: '₹50 Lakh', minCibil: 720, link: 'https://www.icicibank.com/Personal-Banking/loans/personal-loan/index.page' },
-        { bank: 'Axis Bank', product: 'Personal Loan', rate: '11.25% – 22.00%', maxAmount: '₹40 Lakh', minCibil: 700, link: 'https://www.axisbank.com/retail/loans/personal-loan' },
-        { bank: 'Kotak Bank', product: 'Personal Loan', rate: '10.99% – 36.00%', maxAmount: '₹35 Lakh', minCibil: 720, link: 'https://www.kotak.com/en/personal-banking/loans/personal-loan.html' },
+        { bank: 'HDFC Bank', product: 'Personal Loan', rate: '10.75% – 14.50%', maxAmount: '₹40 Lakh', minCibil: 750, minScore: 80, link: 'https://v1.hdfcbank.com/borrow/popular-loans/personal-loan' },
+        { bank: 'ICICI Bank', product: 'Personal Loan', rate: '10.85% – 16.25%', maxAmount: '₹50 Lakh', minCibil: 720, minScore: 75, link: 'https://www.icicibank.com/Personal-Banking/loans/personal-loan/index.page' },
+        { bank: 'SBI', product: 'SBI Xpress Credit', rate: '11.15% – 15.30%', maxAmount: '₹20 Lakh', minCibil: 700, minScore: 65, link: 'https://sbi.co.in/web/personal-banking/loans/personal-loans/xpress-credit' },
+        { bank: 'Axis Bank', product: 'Personal Loan', rate: '11.25% – 22.00%', maxAmount: '₹40 Lakh', minCibil: 700, minScore: 60, link: 'https://www.axisbank.com/retail/loans/personal-loan' },
+        { bank: 'Kotak Bank', product: 'Personal Loan', rate: '10.99% – 36.00%', maxAmount: '₹35 Lakh', minCibil: 650, minScore: 50, link: 'https://www.kotak.com/en/personal-banking/loans/personal-loan.html' },
+        { bank: 'Bajaj Finserv', product: 'Flexi Personal Loan', rate: '13.00% – 36.00%', maxAmount: '₹40 Lakh', minCibil: 600, minScore: 40, link: 'https://www.bajajfinserv.in/personal-loan' },
+        { bank: 'MoneyTap', product: 'Credit Line', rate: '15.00% – 36.00%', maxAmount: '₹5 Lakh', minCibil: 550, minScore: 0, link: 'https://www.moneytap.com/' }
     ]
     const business = [
-        { bank: 'HDFC Bank', product: 'Business Growth Loan', rate: '11.50% – 21.00%', maxAmount: '₹75 Lakh', minCibil: 700, link: 'https://www.hdfcbank.com/sme/borrow/business-loans/business-growth-loan' },
-        { bank: 'SBI', product: 'SME Smart Score', rate: '11.20% – 16.00%', maxAmount: '₹50 Lakh', minCibil: 680, link: 'https://sbi.co.in/web/sme-enterprise/sme-loans' },
-        { bank: 'ICICI Bank', product: 'Business Loan', rate: '12.00% – 19.00%', maxAmount: '₹2 Cr', minCibil: 700, link: 'https://www.icicibank.com/business-banking/loans/business-loan/index.page' },
-        { bank: 'Bajaj Finance', product: 'Business Loan', rate: '14.00% – 26.00%', maxAmount: '₹80 Lakh', minCibil: 650, link: 'https://www.bajajfinserv.in/business-loan' },
-        { bank: 'IDFC First', product: 'Business Loan', rate: '12.50% – 23.00%', maxAmount: '₹1 Cr', minCibil: 680, link: 'https://www.idfcfirstbank.com/business-banking/loans/business-loan' },
+        { bank: 'HDFC Bank', product: 'Business Growth Loan', rate: '11.50% – 21.00%', maxAmount: '₹75 Lakh', minCibil: 700, minScore: 75, link: 'https://www.hdfcbank.com/sme/borrow/business-loans/business-growth-loan' },
+        { bank: 'SBI', product: 'SME Smart Score', rate: '11.20% – 16.00%', maxAmount: '₹50 Lakh', minCibil: 680, minScore: 65, link: 'https://sbi.co.in/web/sme-enterprise/sme-loans' },
+        { bank: 'ICICI Bank', product: 'Business Loan', rate: '12.00% – 19.00%', maxAmount: '₹2 Cr', minCibil: 700, minScore: 70, link: 'https://www.icicibank.com/business-banking/loans/business-loan/index.page' },
+        { bank: 'IDFC First', product: 'Business Loan', rate: '12.50% – 23.00%', maxAmount: '₹1 Cr', minCibil: 680, minScore: 60, link: 'https://www.idfcfirstbank.com/business-banking/loans/business-loan' },
+        { bank: 'Bajaj Finance', product: 'Business Loan', rate: '14.00% – 26.00%', maxAmount: '₹80 Lakh', minCibil: 650, minScore: 45, link: 'https://www.bajajfinserv.in/business-loan' },
+        { bank: 'Lendingkart', product: 'Working Capital', rate: '16.00% – 36.00%', maxAmount: '₹2 Cr', minCibil: 600, minScore: 0, link: 'https://www.lendingkart.com/' }
     ]
+
     const pool = loanType === 'personal' ? personal : business
-    return pool
+
+    // Filter out banks where user doesn't meet the VERY MINIMUM criteria
+    // But allow some margin to show them as "Ambitious"
+    const filtered = pool.filter(b => cibil >= (b.minCibil - 30) && score >= (b.minScore - 15))
+
+    // Assign match labels and sort by suitability
+    const matched = filtered.map(b => {
+        let matchScore = 0
+        let matchLabel = 'Fair Match'
+        let matchColor = 'text-amber-600 bg-amber-50'
+
+        if (cibil >= b.minCibil && score >= b.minScore) {
+            matchScore += 50
+            if (score >= b.minScore + 10) {
+                matchLabel = 'Pre-Approved Match'
+                matchColor = 'text-emerald-700 bg-emerald-50 border-emerald-200'
+            } else {
+                matchLabel = 'Excellent Match'
+                matchColor = 'text-indigo-700 bg-indigo-50 border-indigo-200'
+            }
+        } else {
+            matchScore -= 20
+        }
+
+        return { ...b, matchScore, matchLabel, matchColor }
+    })
+
+    // Sort by best match, then by lowest rate
+    matched.sort((a, b) => b.matchScore - a.matchScore || parseFloat(a.rate) - parseFloat(b.rate))
+
+    return matched.slice(0, 4) // Show top 4 matches
 }

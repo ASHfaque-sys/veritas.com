@@ -106,7 +106,7 @@ export default function Results() {
         })
     }, [loanType, metrics, foir, dscr])
 
-    const [bankRecs, setBankRecs] = React.useState(getStaticBankRecs(loanType, score))
+    const [bankRecs, setBankRecs] = React.useState(getStaticBankRecs(loanType, score, metrics.cibil || metrics.cibilScore))
 
     React.useEffect(() => {
         async function loadBanks() {
@@ -128,7 +128,7 @@ export default function Results() {
     return (
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
-            <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-10 fade-in">
+            <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <div className="flex justify-between items-start mb-1">
                     <h1 className="section-title">Your Eligibility Report</h1>
                     <button onClick={() => window.print()} className="no-print flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors border border-indigo-100 shadow-sm">
@@ -386,15 +386,22 @@ export default function Results() {
                         <>
                             <div className="space-y-3">
                                 {bankRecs.map((bank, i) => (
-                                    <div key={i} className="flex flex-col p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-card transition-shadow">
+                                    <div key={i} className={`flex flex-col p-4 bg-white border ${bank.matchLabel === 'Pre-Approved Match' ? 'border-emerald-200 shadow-sm' : 'border-gray-100'} rounded-xl hover:shadow-card transition-shadow relative overflow-hidden`}>
                                         <div className="flex items-center justify-between mb-3">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-lg font-bold text-indigo-600 shrink-0">
                                                     {bank.bank.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-semibold text-gray-800">{bank.bank}</p>
-                                                    <p className="text-xs text-gray-400">{bank.product}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-sm font-semibold text-gray-800">{bank.bank}</p>
+                                                        {bank.matchLabel && (
+                                                            <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${bank.matchColor || 'bg-gray-100 text-gray-600'}`}>
+                                                                {bank.matchLabel}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs text-gray-400 mt-0.5">{bank.product}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right shrink-0">
@@ -407,7 +414,7 @@ export default function Results() {
                                                 href={bank.link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="block w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold text-center rounded-lg transition-colors border border-indigo-100"
+                                                className={`block w-full py-2 ${bank.matchLabel === 'Pre-Approved Match' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-100' : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-100'} text-xs font-semibold text-center rounded-lg transition-colors border`}
                                             >
                                                 Apply Now &rarr;
                                             </a>

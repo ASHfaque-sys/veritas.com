@@ -102,7 +102,7 @@ export default function Admin() {
     return (
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
-            <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-10 fade-in">
+            <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
                         <BarChart2 size={20} className="text-indigo-600" />

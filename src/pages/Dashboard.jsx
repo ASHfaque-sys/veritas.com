@@ -70,7 +70,7 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen bg-cream flex flex-col">
             <Navbar />
-            <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 fade-in">
+            <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                     <div>
                         <h1 className="section-title mb-1">Your Dashboard</h1>
