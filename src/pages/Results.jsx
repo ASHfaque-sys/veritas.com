@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import MobileBottomNav from '../components/MobileBottomNav'
 import ScoreGauge from '../components/ScoreGauge'
 import MetricRow from '../components/MetricRow'
 import {
     calcFoir, calcDscr, foirStatus, dscrStatus,
     getPersonalImprovements, getBusinessImprovements, getStaticBankRecs, scoreColor
 } from '../utils/scoring'
-import { TrendingDown, Lightbulb, Building2, MessageSquarePlus, ChevronRight, AlertCircle, Info, Share2, CheckSquare, Square, Sliders } from 'lucide-react'
+import { generatePDFReport } from '../utils/pdfReport'
+import { TrendingDown, Lightbulb, Building2, MessageSquarePlus, ChevronRight, AlertCircle, Info, Share2, CheckSquare, Square, Sliders, Download } from 'lucide-react'
 import FloatingChat from '../components/FloatingChat'
 
 // ── Bank approval rates by score bracket ────────────────────────────────────
@@ -131,8 +133,16 @@ export default function Results() {
             <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <div className="flex justify-between items-start mb-1">
                     <h1 className="section-title">Your Eligibility Report</h1>
-                    <button onClick={() => window.print()} className="no-print flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors border border-indigo-100 shadow-sm">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    <button
+                        onClick={() => generatePDFReport({
+                            loanType, score, metrics, sessionId,
+                            bankRecs, improvements,
+                            foir: foir,
+                            dscr: dscr,
+                        })}
+                        className="no-print flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-sm font-semibold transition-colors border border-amber-200 shadow-sm"
+                    >
+                        <Download size={15} />
                         Download PDF
                     </button>
                 </div>
@@ -489,6 +499,7 @@ export default function Results() {
                     summary: `This user applied for a ${loanType} loan and scored ${score}/100 on Veritas AI's eligibility checker.`,
                 }} />
             </main>
+            <MobileBottomNav />
         </div>
     )
 }

@@ -18,6 +18,10 @@
     font-feature-settings: "kern" 1, "liga" 1;
   }
 
+  html.dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+
   h1, h2, h3 {
     @apply font-serif;
   }

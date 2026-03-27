@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
+import { useTheme } from '../context/ThemeContext'
+import { Moon, Sun, TrendingUp, Calculator } from 'lucide-react'
 
 export default function Navbar() {
     const [user, setUser] = useState(null)
+    const [menuOpen, setMenuOpen] = useState(false)
+    const { dark, toggle } = useTheme()
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!supabase) return
-        
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user || null)
         })
-
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user || null)
         })
-
         return () => subscription.unsubscribe()
     }, [])
 
@@ -26,8 +28,27 @@ export default function Navbar() {
                 <span className="nav-logo-name">Veritas <span>AI</span></span>
             </Link>
             <div className="nav-pill-badge hidden md:flex">Live · Real Approval Data</div>
-            <div className="nav-right">
-                <Link to="/emi-calculator" className="nav-link hidden sm:block">EMI Calc</Link>
+            <div className="nav-right flex items-center gap-2">
+                {/* Desktop links */}
+                <Link to="/emi-calculator" className="nav-link hidden sm:flex items-center gap-1">
+                    <Calculator size={14} /> EMI Calc
+                </Link>
+                <Link to="/rate-tracker" className="nav-link hidden md:flex items-center gap-1">
+                    <TrendingUp size={14} /> Rates
+                </Link>
+                <Link to="/affordability" className="nav-link hidden md:flex items-center gap-1">
+                    Affordability
+                </Link>
+
+                {/* Dark mode toggle */}
+                <button
+                    onClick={toggle}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors text-gray-300"
+                    aria-label="Toggle dark mode"
+                >
+                    {dark ? <Sun size={16} /> : <Moon size={16} />}
+                </button>
+
                 {user ? (
                     <Link to="/dashboard" className="nav-btn">Dashboard →</Link>
                 ) : (
