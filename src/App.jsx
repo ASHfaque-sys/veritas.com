@@ -13,6 +13,7 @@ import EmiCalculator from './pages/EmiCalculator'
 import Admin from './pages/Admin'
 import AffordabilityCalculator from './pages/AffordabilityCalculator'
 import RateTracker from './pages/RateTracker'
+import Advisor from './pages/Advisor'
 
 // Shows a spinner while we check the session
 function LoadingScreen() {
@@ -78,6 +79,7 @@ export default function App() {
                     <Route path="/admin"                 element={protect(<Admin />)} />
                     <Route path="/affordability"         element={protect(<AffordabilityCalculator />)} />
                     <Route path="/rate-tracker"          element={protect(<RateTracker />)} />
+                    <Route path="/advisor"               element={protect(<Advisor />)} />
 
                     {/* Catch-all → home (will redirect to /auth if not signed in) */}
                     <Route path="*" element={<Navigate to="/" replace />} />

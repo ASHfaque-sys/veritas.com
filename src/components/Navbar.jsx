@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../utils/supabase'
 import { useTheme } from '../context/ThemeContext'
-import { Moon, Sun, TrendingUp, Calculator } from 'lucide-react'
+import { Moon, Sun, TrendingUp, Calculator, Bot } from 'lucide-react'
 
 export default function Navbar() {
     const [user, setUser] = useState(null)
@@ -36,7 +36,10 @@ export default function Navbar() {
                 <Link to="/rate-tracker" className="nav-link hidden md:flex items-center gap-1">
                     <TrendingUp size={14} /> Rates
                 </Link>
-                <Link to="/affordability" className="nav-link hidden md:flex items-center gap-1">
+                <Link to="/advisor" className="nav-link hidden md:flex items-center gap-1 text-indigo-500 hover:text-indigo-400">
+                    <Bot size={14} /> AI Advisor
+                </Link>
+                <Link to="/affordability" className="nav-link hidden lg:flex items-center gap-1">
                     Affordability
                 </Link>
 

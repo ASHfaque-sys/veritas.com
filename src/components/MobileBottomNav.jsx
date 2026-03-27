@@ -1,10 +1,11 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Home, Calculator, LayoutDashboard, Search } from 'lucide-react'
+import { Home, Calculator, LayoutDashboard, Search, Bot } from 'lucide-react'
 
 const tabs = [
     { icon: Home, label: 'Home', path: '/' },
     { icon: Search, label: 'Check', path: '/personal-loan' },
+    { icon: Bot, label: 'Advisor', path: '/advisor' },
     { icon: Calculator, label: 'EMI', path: '/emi-calculator' },
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
 ]

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import MobileBottomNav from '../components/MobileBottomNav'
 import { supabase, isSupabaseConfigured } from '../utils/supabase'
-import { FileText, LogOut, ArrowRight, Loader2, TrendingUp, Calculator, BarChart3, Clock } from 'lucide-react'
+import { FileText, LogOut, ArrowRight, Loader2, TrendingUp, Calculator, BarChart3, Clock, Bot } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function Dashboard() {
@@ -106,8 +106,9 @@ export default function Dashboard() {
                 {/* Quick Tools */}
                 <div className="card dark:bg-gray-900 dark:border-gray-700 mb-6">
                     <h2 className="font-semibold text-gray-800 dark:text-white mb-4 text-sm uppercase tracking-wider">Quick Tools</h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                         {[
+                            { label: 'AI Advisor', icon: Bot, path: '/advisor', color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' },
                             { label: 'EMI Calculator', icon: Calculator, path: '/emi-calculator', color: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400' },
                             { label: 'Affordability', icon: BarChart3, path: '/affordability', color: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' },
                             { label: 'Rate Tracker', icon: TrendingUp, path: '/rate-tracker', color: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' },
