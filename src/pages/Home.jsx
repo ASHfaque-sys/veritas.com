@@ -28,7 +28,7 @@ export default function Home() {
                 <div className="hero-inner">
                     <div className="hero-top block lg:grid">
                         <div className="mb-10 lg:mb-0">
-                            <div className="hero-tag">⚡ India's loan intelligence layer</div>
+                            <div className="hero-tag">⚡ Loan intelligence layer</div>
                             <h1 className="hero-headline">
                                 <span className="hl-outline">Know your</span>
                                 <span className="hl-lime">loan odds</span>
@@ -212,7 +212,7 @@ export default function Home() {
                 <div className="mb-10 md:mb-0">
                     <div className="cta-kicker">Free Forever</div>
                     <h2 className="cta-title">Ready to check<br />your <span>eligibility?</span></h2>
-                    <p className="cta-sub">Built for India's borrowers. Free, private, and instant.</p>
+                    <p className="cta-sub">Built for borrowers. Free, private, and instant.</p>
                 </div>
                 <div className="cta-right w-full md:w-auto">
                     <button onClick={() => navigate('/personal-loan')} className="btn-cta text-center w-full">Personal Loan <span>→</span></button>

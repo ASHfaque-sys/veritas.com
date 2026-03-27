@@ -70,7 +70,7 @@ export default function RateTracker() {
                             <TrendingUp size={24} className="text-indigo-500" />
                             Bank Rate Tracker
                         </h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Live interest rate trends across major Indian lenders.</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Live interest rate trends across major lenders.</p>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
                         <RefreshCw size={12} />

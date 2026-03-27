@@ -11,7 +11,7 @@ export default function Footer() {
                             <div className="footer-logo-mark">V</div>
                             <span className="footer-logo-name">Veritas <span>AI</span></span>
                         </div>
-                        <p className="footer-desc">AI-powered loan eligibility for India. Know your approval odds before you walk into a bank. Free, always.</p>
+                        <p className="footer-desc">AI-powered loan eligibility checker. Know your approval odds before you walk into a bank. Free, always.</p>
                     </div>
                     <div>
                         <div className="footer-col-head">Tools</div>

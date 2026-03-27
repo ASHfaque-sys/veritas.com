@@ -13,7 +13,6 @@ import EmiCalculator from './pages/EmiCalculator'
 import Admin from './pages/Admin'
 import AffordabilityCalculator from './pages/AffordabilityCalculator'
 import RateTracker from './pages/RateTracker'
-import Onboarding from './components/Onboarding'
 
 // Shows a spinner while we check the session
 function LoadingScreen() {
@@ -37,7 +36,6 @@ function ProtectedRoute({ user, loading, children }) {
 export default function App() {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [showOnboarding, setShowOnboarding] = useState(false)
 
     useEffect(() => {
         if (!isSupabaseConfigured()) {
@@ -48,17 +46,10 @@ export default function App() {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user || null)
             setLoading(false)
-            // Show onboarding for new sessions
-            if (session?.user && !localStorage.getItem('vt-onboarded')) {
-                setShowOnboarding(true)
-            }
         })
         // Listen for sign-in / sign-out
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user || null)
-            if (session?.user && !localStorage.getItem('vt-onboarded')) {
-                setShowOnboarding(true)
-            }
         })
         return () => subscription.unsubscribe()
     }, [])
@@ -72,7 +63,6 @@ export default function App() {
     return (
         <ThemeProvider>
             <BrowserRouter>
-                {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}
                 <Routes>
                     {/* Public route — login/register */}
                     <Route path="/auth" element={<Auth />} />

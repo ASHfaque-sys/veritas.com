@@ -212,7 +212,7 @@ export default function Feedback() {
                         <div>
                             <h2 className="font-serif text-2xl text-gray-900">Thank you!</h2>
                             <p className="text-sm text-gray-500 mt-2 max-w-xs">
-                                Your feedback helps improve loan predictions for millions of Indians.
+                                Your feedback helps improve loan predictions for millions of borrowers.
                             </p>
                         </div>
 

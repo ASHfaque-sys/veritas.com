@@ -73,7 +73,7 @@ export function generatePDFReport({ loanType, score, metrics, bankRecs, improvem
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(255, 255, 230)
-    doc.text("India's AI-Powered Loan Eligibility Platform", MARGIN, 22)
+    doc.text("AI-Powered Loan Eligibility Platform", MARGIN, 22)
 
     // Report meta
     const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -214,7 +214,7 @@ export function generatePDFReport({ loanType, score, metrics, bankRecs, improvem
         doc.setPage(p)
         drawRect(0, 284, W, 13, [250, 246, 235])
         line(0, 284, W, [201, 168, 76])
-        text('Veritas AI · India\'s Loan Intelligence Platform · veritas-com.vercel.app', W / 2, 291, { size: 7, color: [120, 100, 50], align: 'center' })
+        text('Veritas AI · Loan Intelligence Platform · veritas-com.vercel.app', W / 2, 291, { size: 7, color: [120, 100, 50], align: 'center' })
         text(`Page ${p} of ${pagesCount}`, W - MARGIN, 291, { size: 7, color: [150, 130, 80], align: 'right' })
         text('This report is indicative only. Actual approval depends on lender assessment.', MARGIN, 291, { size: 6.5, color: [160, 140, 100] })
     }
