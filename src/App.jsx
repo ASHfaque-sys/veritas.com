@@ -15,6 +15,32 @@ import AffordabilityCalculator from './pages/AffordabilityCalculator'
 import RateTracker from './pages/RateTracker'
 import Advisor from './pages/Advisor'
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, info: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    this.setState({ info });
+    console.error("ErrorBoundary caught:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', backgroundColor: '#000', color: 'red', minHeight: '100vh' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>FATAL REACT ERROR</h1>
+          <pre style={{ marginTop: '1rem', whiteSpace: 'pre-wrap' }}>{String(this.state.error)}</pre>
+          <pre style={{ marginTop: '1rem', color: '#ffb3b3', fontSize: '0.8rem' }}>{this.state.info?.componentStack}</pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // Shows a spinner while we check the session
 function LoadingScreen() {
     return (
@@ -63,28 +89,30 @@ export default function App() {
 
     return (
         <ThemeProvider>
-            <BrowserRouter>
-                <Routes>
-                    {/* Public route — login/register */}
-                    <Route path="/auth" element={<Auth />} />
+            <ErrorBoundary>
+                <BrowserRouter>
+                    <Routes>
+                        {/* Public route — login/register */}
+                        <Route path="/auth" element={<Auth />} />
 
-                    {/* All other routes require sign-in */}
-                    <Route path="/"                      element={protect(<Home />)} />
-                    <Route path="/personal-loan"         element={protect(<PersonalLoan />)} />
-                    <Route path="/business-loan"         element={protect(<BusinessLoan />)} />
-                    <Route path="/results"               element={protect(<Results />)} />
-                    <Route path="/feedback"              element={protect(<Feedback />)} />
-                    <Route path="/dashboard"             element={protect(<Dashboard />)} />
-                    <Route path="/emi-calculator"        element={protect(<EmiCalculator />)} />
-                    <Route path="/admin"                 element={protect(<Admin />)} />
-                    <Route path="/affordability"         element={protect(<AffordabilityCalculator />)} />
-                    <Route path="/rate-tracker"          element={protect(<RateTracker />)} />
-                    <Route path="/advisor"               element={protect(<Advisor />)} />
+                        {/* All other routes require sign-in */}
+                        <Route path="/"                      element={protect(<Home />)} />
+                        <Route path="/personal-loan"         element={protect(<PersonalLoan />)} />
+                        <Route path="/business-loan"         element={protect(<BusinessLoan />)} />
+                        <Route path="/results"               element={protect(<Results />)} />
+                        <Route path="/feedback"              element={protect(<Feedback />)} />
+                        <Route path="/dashboard"             element={protect(<Dashboard />)} />
+                        <Route path="/emi-calculator"        element={protect(<EmiCalculator />)} />
+                        <Route path="/admin"                 element={protect(<Admin />)} />
+                        <Route path="/affordability"         element={protect(<AffordabilityCalculator />)} />
+                        <Route path="/rate-tracker"          element={protect(<RateTracker />)} />
+                        <Route path="/advisor"               element={protect(<Advisor />)} />
 
-                    {/* Catch-all → home (will redirect to /auth if not signed in) */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </BrowserRouter>
+                        {/* Catch-all → home (will redirect to /auth if not signed in) */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </BrowserRouter>
+            </ErrorBoundary>
         </ThemeProvider>
     )
 }
