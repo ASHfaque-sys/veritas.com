@@ -201,6 +201,13 @@ export default function Results({ inlineData, onReset }) {
         })
     }, [loanType, metrics, foir, dscr])
 
+    const cibilToUse = loanType === 'business' ? metrics.cibilScore : metrics.cibil;
+    const bankRecs = useMemo(() => getStaticBankRecs(loanType, score, cibilToUse), [loanType, score, cibilToUse]);
+    const radarData = getRadarData(loanType, metrics, foir, dscr, cibilToUse);
+    const bankerComment = generateBankerComment(loanType, score, foir, dscr, cibilToUse);
+    const detailedMetrics = getDetailedMetrics(loanType, score, metrics, foir, dscr, cibilToUse);
+    const mainColor = scoreColor(score);
+
     return (
         <div className={`dark ${inlineData ? "w-full pb-10 mt-8 border-t border-white/10 pt-8" : "min-h-screen bg-[#0A0A0A] text-white flex flex-col"}`}>
             {!inlineData && <Navbar />}
