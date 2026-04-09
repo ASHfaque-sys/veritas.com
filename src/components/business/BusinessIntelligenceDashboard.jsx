@@ -1,29 +1,15 @@
 import React, { useState } from 'react'
-import { FileCheck, Activity, Hexagon, Target, HandCoins, Home, ShieldAlert, Building2, CalendarDays, SlidersHorizontal, ChevronRight } from 'lucide-react'
+import { FileCheck, Activity, Hexagon, ChevronRight } from 'lucide-react'
 
-// Import all 11 feature components
+// Import remaining feature components
 import GstEngine from './GstEngine'
 import CashFlowAnalyzer from './CashFlowAnalyzer' // Covers 2 and 3
 import HealthScore from './HealthScore'
-import LoanQuiz from './LoanQuiz'
-import MudraChecker from './MudraChecker'
-import CollateralOptimizer from './CollateralOptimizer'
-import RiskAnalyzer from './RiskAnalyzer'
-import IndustryBenchmarks from './IndustryBenchmarks'
-import TimingIntelligence from './TimingIntelligence'
-import CreditSimulator from './CreditSimulator'
 
 const TOOLS = [
     { id: 'gst', name: 'GST Eligibility Engine', icon: FileCheck, color: 'text-indigo-600', bg: 'bg-indigo-50', component: GstEngine },
     { id: 'cf', name: 'Cash Flow & Stacking', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', component: CashFlowAnalyzer },
     { id: 'health', name: '5-D Health Radar', icon: Hexagon, color: 'text-indigo-600', bg: 'bg-indigo-50', component: HealthScore },
-    { id: 'quiz', name: 'Loan Type Recommender', icon: Target, color: 'text-emerald-600', bg: 'bg-emerald-50', component: LoanQuiz },
-    { id: 'mudra', name: 'MUDRA Engine', icon: HandCoins, color: 'text-orange-600', bg: 'bg-orange-50', component: MudraChecker },
-    { id: 'collateral', name: 'Collateral Optimizer', icon: Home, color: 'text-teal-600', bg: 'bg-teal-50', component: CollateralOptimizer },
-    { id: 'risk', name: 'Rejection Risk Scanner', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50', component: RiskAnalyzer },
-    { id: 'industry', name: 'Industry Benchmarking', icon: Building2, color: 'text-slate-600', bg: 'bg-slate-100', component: IndustryBenchmarks },
-    { id: 'timing', name: 'Timing Intelligence', icon: CalendarDays, color: 'text-indigo-600', bg: 'bg-indigo-50', component: TimingIntelligence },
-    { id: 'sim', name: 'What-If Simulator', icon: SlidersHorizontal, color: 'text-purple-600', bg: 'bg-purple-50', component: CreditSimulator },
 ]
 
 export default function BusinessIntelligenceDashboard() {
