@@ -131,13 +131,7 @@ export default function Advisor() {
                                         ? 'bg-amber-500 text-white rounded-tr-sm shadow-md'
                                         : 'bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm'
                                 }`}>
-                                    {msg.role === 'user' ? (
-                                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                                    ) : (
-                                        <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-li:my-0.5">
-                                            <ReactMarkdown>{msg.content.replace(/<(?=\s|\d)/g, '&lt;')}</ReactMarkdown>
-                                        </div>
-                                    )}
+                                    <pre className="text-sm whitespace-pre-wrap font-sans">{msg.content}</pre>
                                 </div>
                             </div>
                         ))}
