@@ -90,7 +90,8 @@ function buildPrompt(documentType: string, _loanType: string): string {
   "emi_obligations_detected": number or null,
   "bounce_count": number or null,
   "red_flags": ["an array of any major behavioral risks you detect, otherwise an empty array"]
-}`;
+}
+`;
     }
 
     return "Extract key financial figures from this document and return as JSON.";
@@ -119,7 +120,10 @@ Deno.serve(async (req: Request) => {
             );
         }
 
-        const textPrompt = buildPrompt(documentType, loanType || "personal");
+        let textPrompt = buildPrompt(documentType, loanType || "personal");
+
+        // Force currency conversion globally
+        textPrompt += "\n\nIMPORTANT INSTRUCTION: If the monetary values in the document are in a foreign currency (e.g., USD, EUR, GBP), you MUST automatically compute and convert all extracted numbers into Indian Rupees (INR) using approximate current market exchange rates (e.g., 1 USD = 83 INR). Output ONLY the final INR converted numbers in the JSON.";
 
         // Call Google Gemini API with inline PDF data
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
