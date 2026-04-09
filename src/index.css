@@ -169,52 +169,50 @@ html.dark ::-webkit-scrollbar-track { background: #1c1c1c; }
 /* ── Dark Mode Global Overrides ───────────────────────────────────────── */
 /* These handle Tailwind utility classes that were hardcoded without dark: variants */
 
-html.dark {
-  /* Text overrides */
-  .text-gray-800 { color: #e5e5e0; }
-  .text-gray-700 { color: #d4d4cf; }
-  .text-gray-600 { color: #a3a39e; }
-  .text-gray-900 { color: #f5f5f0; }
+/* Text overrides */
+html.dark .text-gray-800 { color: #e5e5e0; }
+html.dark .text-gray-700 { color: #d4d4cf; }
+html.dark .text-gray-600 { color: #a3a39e; }
+html.dark .text-gray-900 { color: #f5f5f0; }
 
-  /* Background overrides */
-  .bg-white { background-color: #1c1c1c; }
-  .bg-cream, .bg-cream-50 { background-color: #0d0d0d; }
-  .bg-gray-50 { background-color: #141414; }
-  .bg-gray-100 { background-color: #1c1c1c; }
-  .bg-gray-200 { background-color: #2a2a2a; }
+/* Background overrides */
+html.dark .bg-white { background-color: #1c1c1c; }
+html.dark .bg-cream, html.dark .bg-cream-50 { background-color: #0d0d0d; }
+html.dark .bg-gray-50 { background-color: #141414; }
+html.dark .bg-gray-100 { background-color: #1c1c1c; }
+html.dark .bg-gray-200 { background-color: #2a2a2a; }
 
-  /* Alert / Status overrides */
-  .bg-red-50, .bg-red-50\/40 { background-color: rgba(239, 68, 68, 0.08); }
-  .bg-amber-50 { background-color: rgba(245, 158, 11, 0.08); }
-  .bg-green-50 { background-color: rgba(34, 197, 94, 0.08); }
-  .bg-indigo-50, .bg-indigo-50\/50 { background-color: rgba(99, 102, 241, 0.08); }
-  .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.08); }
+/* Alert / Status overrides */
+html.dark .bg-red-50, html.dark .bg-red-50\/40 { background-color: rgba(239, 68, 68, 0.08); }
+html.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.08); }
+html.dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.08); }
+html.dark .bg-indigo-50, html.dark .bg-indigo-50\/50 { background-color: rgba(99, 102, 241, 0.08); }
+html.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.08); }
 
-  .text-red-800 { color: #fca5a5; }
-  .text-amber-800 { color: #fcd34d; }
-  .text-green-800 { color: #86efac; }
-  .text-indigo-800 { color: #a5b4fc; }
+html.dark .text-red-800 { color: #fca5a5; }
+html.dark .text-amber-800 { color: #fcd34d; }
+html.dark .text-green-800 { color: #86efac; }
+html.dark .text-indigo-800 { color: #a5b4fc; }
 
-  /* Border overrides */
-  .border-gray-100, .border-gray-200 { border-color: #2a2a2a; }
-  .border-red-100, .border-red-200 { border-color: rgba(239, 68, 68, 0.2); }
-  .border-amber-200 { border-color: rgba(245, 158, 11, 0.2); }
-  .border-green-200 { border-color: rgba(34, 197, 94, 0.2); }
-  .border-indigo-100, .border-indigo-200 { border-color: rgba(99, 102, 241, 0.2); }
-  .border-emerald-100, .border-emerald-200 { border-color: rgba(16, 185, 129, 0.2); }
+/* Border overrides */
+html.dark .border-gray-100, html.dark .border-gray-200 { border-color: #2a2a2a; }
+html.dark .border-red-100, html.dark .border-red-200 { border-color: rgba(239, 68, 68, 0.2); }
+html.dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.2); }
+html.dark .border-green-200 { border-color: rgba(34, 197, 94, 0.2); }
+html.dark .border-indigo-100, html.dark .border-indigo-200 { border-color: rgba(99, 102, 241, 0.2); }
+html.dark .border-emerald-100, html.dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.2); }
 
-  /* Hover overrides */
-  .hover\:bg-gray-50:hover { background-color: #1c1c1c; }
-  .hover\:bg-gray-200:hover { background-color: #333330; }
-  .hover\:bg-amber-100:hover { background-color: rgba(245, 158, 11, 0.15); }
+/* Hover overrides */
+html.dark .hover\:bg-gray-50:hover { background-color: #1c1c1c; }
+html.dark .hover\:bg-gray-200:hover { background-color: #333330; }
+html.dark .hover\:bg-amber-100:hover { background-color: rgba(245, 158, 11, 0.15); }
 
-  /* Tab / toggle bar overrides */
-  .bg-gray-100.p-1 { background-color: #1c1c1c; }
-  .bg-white.shadow-sm { background-color: #242424; }
+/* Tab / toggle bar overrides */
+html.dark .bg-gray-100.p-1 { background-color: #1c1c1c; }
+html.dark .bg-white.shadow-sm { background-color: #242424; }
 
-  /* Specific component overrides */
-  .bg-gradient-to-br.from-indigo-50\/50 { background: linear-gradient(to bottom right, rgba(99,102,241,0.05), #141414); }
-  .bg-gradient-to-r.from-gold\/10 { background: linear-gradient(to right, rgba(201,168,76,0.1), transparent); }
-  .bg-gradient-to-br.from-gold\/6 { background: linear-gradient(to bottom right, rgba(201,168,76,0.06), rgba(201,168,76,0.03)); }
-}
+/* Specific component overrides */
+html.dark .bg-gradient-to-br.from-indigo-50\/50 { background: linear-gradient(to bottom right, rgba(99,102,241,0.05), #141414); }
+html.dark .bg-gradient-to-r.from-gold\/10 { background: linear-gradient(to right, rgba(201,168,76,0.1), transparent); }
+html.dark .bg-gradient-to-br.from-gold\/6 { background: linear-gradient(to bottom right, rgba(201,168,76,0.06), rgba(201,168,76,0.03)); }
 
