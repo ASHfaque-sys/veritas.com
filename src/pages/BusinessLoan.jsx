@@ -83,7 +83,8 @@ export default function BusinessLoan() {
     const [activeTab, setActiveTab] = useState('intelligence') // 'apply' or 'intelligence'
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
-    const [activeLoanType, setActiveLoanType] = useState(null)
+    const [activeLoanType, setActiveLoanType] = useState('working_capital')
+    const [analysisResult, setAnalysisResult] = useState(null)
 
     const [form, setForm] = useState({
         businessType: '',
@@ -175,29 +176,28 @@ export default function BusinessLoan() {
                 probabilityScore: score.score,
             })
 
-            navigate('/results', {
-                state: {
-                    loanType: 'business',
-                    score,
-                    sessionId: sessionData?.session_id,
-                    loanTypeChosen: activeLoanType,
-                    hasGstReturns: !!gstReturns,
-                    hasBankStatements: !!bankStatements,
-                    metrics: {
-                        annualTurnover: numTurnover,
-                        loanAmount: numLoan,
-                        existingEMI: numEMI,
-                        yearsInBusiness: numYears,
-                        netProfit: numProfit,
-                        depreciation: numDeprec,
-                        cibilScore: numCibil,
-                        businessType: form.businessType,
-                        industry: form.industry,
-                        redFlags: extractedData.bankStatements?.red_flags || [],
-                        insights: score.insights,
-                    },
+            setAnalysisResult({
+                loanType: 'business',
+                score,
+                sessionId: sessionData?.session_id,
+                loanTypeChosen: activeLoanType,
+                hasGstReturns: !!gstReturns,
+                hasBankStatements: !!bankStatements,
+                metrics: {
+                    annualTurnover: numTurnover,
+                    loanAmount: numLoan,
+                    existingEMI: numEMI,
+                    yearsInBusiness: numYears,
+                    netProfit: numProfit,
+                    depreciation: numDeprec,
+                    cibilScore: numCibil,
+                    businessType: form.businessType,
+                    industry: form.industry,
+                    redFlags: extractedData.bankStatements?.red_flags || [],
+                    insights: score.insights,
                 },
             })
+            setLoading(false)
         } catch (e) {
             setError('Analysis failed. Please try again.')
             setLoading(false)
@@ -215,29 +215,35 @@ export default function BusinessLoan() {
                         <ChevronLeft size={16} /> Back
                     </button>
                     
-                    <div className="flex bg-gray-100 p-1 rounded-xl w-full sm:w-auto">
-                        <button 
-                            onClick={() => setActiveTab('intelligence')}
-                            className={`flex-1 sm:px-6 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === 'intelligence' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            Intelligence Suite
-                        </button>
-                        <button 
-                            onClick={() => setActiveTab('apply')}
-                            className={`flex-1 sm:px-6 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === 'apply' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            Apply for Loan
-                        </button>
+                    {!analysisResult && (
+                        <div className="flex bg-gray-100 p-1 rounded-xl w-full sm:w-auto">
+                            <button 
+                                onClick={() => setActiveTab('intelligence')}
+                                className={`flex-1 sm:px-6 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === 'intelligence' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            >
+                                Intelligence Suite
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('apply')}
+                                className={`flex-1 sm:px-6 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === 'apply' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            >
+                                Apply for Loan
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {!analysisResult && (
+                    <div className="mb-8">
+                        <h1 className="section-title">Business Loan Center</h1>
+                        <p className="text-sm text-gray-500 mt-1">AI-powered analytics and direct application portal.</p>
                     </div>
-                </div>
+                )}
 
-                <div className="mb-8">
-                    <h1 className="section-title">Business Loan Center</h1>
-                    <p className="text-sm text-gray-500 mt-1">AI-powered analytics and direct application portal.</p>
-                </div>
-
-                {activeTab === 'intelligence' ? (
+                {activeTab === 'intelligence' && !analysisResult ? (
                     <BusinessIntelligenceDashboard />
+                ) : analysisResult ? (
+                    <Results inlineData={analysisResult} onReset={() => { setAnalysisResult(null); window.scrollTo(0,0); }} />
                 ) : (
                     <>
 

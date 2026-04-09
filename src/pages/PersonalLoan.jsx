@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import CibilSlider from '../components/CibilSlider'
 import FileUpload from '../components/FileUpload'
 import LoadingScreen from '../components/LoadingScreen'
+import Results from './Results'
 import { ChevronLeft, AlertCircle } from 'lucide-react'
 import { calcFoir, scorePersonalLoan } from '../utils/scoring'
 import { analyseDocument, saveAssessment } from '../utils/api'
@@ -15,6 +16,7 @@ export default function PersonalLoan() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [analysisResult, setAnalysisResult] = useState(null)
 
     const [cibil, setCibil] = useState(720)
     const [form, setForm] = useState({
@@ -82,23 +84,22 @@ export default function PersonalLoan() {
                 probabilityScore: score,
             })
 
-            navigate('/results', {
-                state: {
-                    loanType: 'personal',
-                    score,
-                    sessionId: sessionData?.session_id,
-                    metrics: {
-                        cibil,
-                        foir,
-                        monthlyIncome: numIncome,
-                        existingEMI: numEMI,
-                        loanAmount: numLoan,
-                        employmentType: form.employmentType,
-                        yearsAtEmployer: numYears,
-                        city: form.city,
-                    },
+            setAnalysisResult({
+                loanType: 'personal',
+                score,
+                sessionId: sessionData?.session_id,
+                metrics: {
+                    cibil,
+                    foir,
+                    monthlyIncome: numIncome,
+                    existingEMI: numEMI,
+                    loanAmount: numLoan,
+                    employmentType: form.employmentType,
+                    yearsAtEmployer: numYears,
+                    city: form.city,
                 },
             })
+            setLoading(false)
         } catch (e) {
             setError('Analysis failed. Please try again.')
             setLoading(false)
@@ -119,10 +120,17 @@ export default function PersonalLoan() {
                     <ChevronLeft size={16} /> Back
                 </button>
 
-                <div className="mb-8">
-                    <h1 className="section-title">Personal Loan Eligibility</h1>
-                    <p className="text-sm text-gray-500 mt-1">Fill in your details and upload documents for an AI-powered assessment.</p>
-                </div>
+                {!analysisResult && (
+                    <div className="mb-8">
+                        <h1 className="section-title">Personal Loan Eligibility</h1>
+                        <p className="text-sm text-gray-500 mt-1">Fill in your details and upload documents for an AI-powered assessment.</p>
+                    </div>
+                )}
+
+                {analysisResult ? (
+                    <Results inlineData={analysisResult} onReset={() => { setAnalysisResult(null); window.scrollTo(0,0); }} />
+                ) : (
+                    <>
 
                 {/* ── Step 1: CIBIL ── */}
                 <div className="card mb-6">
@@ -286,6 +294,8 @@ export default function PersonalLoan() {
                 <p className="text-center text-xs text-gray-400 mt-4">
                     No hard credit inquiry. Safe & secure.
                 </p>
+                </>
+                )}
             </main>
         </div>
     )

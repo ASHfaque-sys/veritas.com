@@ -11,7 +11,8 @@ import {
 import { generatePDFReport } from '../utils/pdfReport'
 import { TrendingDown, Lightbulb, Building2, MessageSquarePlus, ChevronRight, AlertCircle, Info, Share2, CheckSquare, Square, Sliders, Download } from 'lucide-react'
 import FloatingChat from '../components/FloatingChat'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts'
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts'
+import { motion } from 'framer-motion'
 
 // ── Bank approval rates by score bracket ────────────────────────────────────
 const BANK_APPROVAL_RATES = {
@@ -61,12 +62,103 @@ function fmtINR(n) {
 }
 function fmtPct(n) { return n != null ? (n * 100).toFixed(1) + '%' : '—' }
 
-export default function Results() {
+function getRadarData(loanType, metrics, foir, dscr, cibil) {
+    if (loanType === 'personal') {
+        const incomeScore = Math.min(100, (metrics.monthlyIncome / 100000) * 100)
+        const debtScore = Math.max(0, 100 - (foir * 100))
+        const historyScore = Math.max(0, ((cibil - 300) / 600) * 100)
+        const stabilityScore = Math.min(100, (metrics.yearsAtEmployer / 5) * 100)
+        const cashFlowScore = 80 // Base assumed for personal
+        
+        return [
+            { subject: 'Cash Flow', A: cashFlowScore, fullMark: 100 },
+            { subject: 'Income Size', A: incomeScore, fullMark: 100 },
+            { subject: 'Debt Burden', A: debtScore, fullMark: 100 },
+            { subject: 'Discipline', A: historyScore, fullMark: 100 },
+            { subject: 'Stability', A: stabilityScore, fullMark: 100 },
+        ]
+    } else {
+        const revenueScore = Math.min(100, (metrics.annualTurnover / 5000000) * 100)
+        const debtScore = Math.min(100, Math.max(0, (dscr - 1) * 50)) // DSCR 1.0 = 0, DSCR 3.0 = 100
+        const historyScore = Math.max(0, ((cibil - 300) / 600) * 100)
+        const stabilityScore = Math.min(100, (metrics.yearsInBusiness / 5) * 100)
+        
+        let cashFlowScore = 70
+        if (metrics.netProfit) cashFlowScore = Math.min(100, (metrics.netProfit / (metrics.annualTurnover*0.1)) * 100)
+
+        return [
+            { subject: 'Cash Flow', A: cashFlowScore, fullMark: 100 },
+            { subject: 'Revenue Growth', A: revenueScore, fullMark: 100 },
+            { subject: 'Debt Servicing', A: debtScore, fullMark: 100 },
+            { subject: 'Discipline', A: historyScore, fullMark: 100 },
+            { subject: 'Stability', A: stabilityScore, fullMark: 100 },
+        ]
+    }
+}
+
+function generateBankerComment(loanType, score, foir, dscr, cibil) {
+    if (loanType === 'personal') {
+        if (score > 80) return "The applicant demonstrates robust repayment discipline and stable employment history. Low obligations indicate a strong capacity to assume new debt. Eligible for immediate processing."
+        if (score > 60) return "Applicant shows moderate stability. While credit history is acceptable, current debt-to-income limits maximum exposure. Reducing existing FOIR could significantly improve borrowing capacity."
+        return "High risk profile. Elevated fixed obligations (FOIR) or poor credit history constrain borrowing capacity. Applicant falls outside primary lending policies until debt exposure is reduced."
+    } else {
+         if (score > 80) return "The enterprise exhibits excellent cash flow consistency and strong debt service coverage. Overall business fundamentals meet prime underwriting criteria. Recommended for approval."
+         if (score > 60) return "Business shows adequate operational stability but carries moderate leverage. Debt service coverage (DSCR) is acceptable but requires monitoring. Consider collateral-backed structuring."
+         return "Entity demonstrates weak operational cash flow or highly stressed debt service capacity. Risk of default is elevated under current market conditions. Not recommended for unsecured exposure."
+    }
+}
+
+function getDetailedMetrics(loanType, score, metrics, foir, dscr, cibil) {
+    const list = []
+    
+    // CASH FLOW
+    const cfScore = loanType === 'business' 
+        ? Math.round(Math.min(100, (metrics.netProfit / (metrics.annualTurnover*0.1)) * 100)) || 75
+        : 80
+    list.push({
+        title: 'Cash Flow Consistency',
+        score: cfScore,
+        basedOn: loanType === 'business' ? 'Net Profit Margins vs Turnover' : 'Account Balance Trends',
+        suggestion: cfScore > 70 ? 'Maintain stable liquid reserves' : 'Improve operational margins to build liquidity buffer'
+    })
+
+    // REVENUE/INCOME
+    if (loanType === 'business') {
+        const revScore = Math.round(Math.min(100, (metrics.annualTurnover / 5000000) * 100)) || 60
+        list.push({ title: 'Revenue Growth', score: revScore, basedOn: 'Annual Turnover & GST trends', suggestion: 'Maintain or improve consistent volume' })
+    } else {
+        const incScore = Math.round(Math.min(100, (metrics.monthlyIncome / 100000) * 100)) || 65
+        list.push({ title: 'Income Stability', score: incScore, basedOn: 'Monthly Net Income', suggestion: 'Consistent salary deposits improve approval odds' })
+    }
+
+    // DEBT BURDEN
+    if (loanType === 'personal') {
+        const dbScore = Math.round(Math.max(0, 100 - (foir * 100)))
+        list.push({ title: 'Debt Burden (FOIR)', score: dbScore, basedOn: 'Existing EMI vs Net Income', suggestion: dbScore > 50 ? 'Avoid adding new unsecured obligations' : 'Reduce current loan exposure to improve limits' })
+    } else {
+        const dbScore = Math.round(Math.min(100, Math.max(0, (dscr - 1) * 50))) || 50
+        list.push({ title: 'Debt Coverage (DSCR)', score: dbScore, basedOn: 'Net Profit vs EMI Obligations', suggestion: dbScore < 50 ? 'Reduce outstanding liabilities or restructure debt' : 'Strong capacity to service additional EMIs' })
+    }
+
+    // DISCIPLINE
+    const discScore = Math.round(Math.max(0, ((cibil - 300) / 600) * 100)) || 70
+    list.push({ title: 'Payment Discipline', score: discScore, basedOn: 'CIBIL Score & Repayment History', suggestion: discScore < 70 ? 'Clear outstanding dues to eliminate negative marks' : 'Reinforce positive on-time payment behavior' })
+
+    // STABILITY
+    const stabScore = loanType === 'business'
+        ? Math.round(Math.min(100, (metrics.yearsInBusiness / 5) * 100)) || 50
+        : Math.round(Math.min(100, (metrics.yearsAtEmployer / 5) * 100)) || 50
+    list.push({ title: loanType === 'business' ? 'Business Stability' : 'Employment Stability', score: stabScore, basedOn: loanType === 'business' ? 'Business Vintage' : 'Years at Current Employer', suggestion: 'Improves naturally over time' })
+
+    return list
+}
+
+export default function Results({ inlineData, onReset }) {
     const { state } = useLocation()
     const navigate = useNavigate()
 
-    // Fallback if navigated directly without state (demo mode)
-    const s = state || {
+    // Use inlineData if passed as prop, otherwise check router state, otherwise fallback to demo
+    const s = inlineData || state || {
         loanType: 'personal',
         score: 68,
         sessionId: 'demo',
@@ -109,128 +201,123 @@ export default function Results() {
         })
     }, [loanType, metrics, foir, dscr])
 
-    const [bankRecs, setBankRecs] = React.useState(getStaticBankRecs(loanType, score, metrics.cibil || metrics.cibilScore))
-
-    React.useEffect(() => {
-        async function loadBanks() {
-            try {
-                const { fetchBankProducts } = await import('../utils/api')
-                const dynamicBanks = await fetchBankProducts(loanType)
-                if (dynamicBanks && dynamicBanks.length > 0) {
-                    setBankRecs(dynamicBanks)
-                }
-            } catch (err) {
-                console.error("Failed to load dynamic banks, falling back to static.")
-            }
-        }
-        loadBanks()
-    }, [loanType, score])
-
-    const mainColor = scoreColor(score)
-
     return (
-        <div className="min-h-screen bg-cream dark:bg-void flex flex-col">
-            <Navbar />
-            <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
-                <div className="flex justify-between items-start mb-1">
-                    <h1 className="section-title">Your Eligibility Report</h1>
-                    <button
-                        onClick={() => generatePDFReport({
-                            loanType, score, metrics, sessionId,
-                            bankRecs, improvements,
-                            foir: foir,
-                            dscr: dscr,
-                        })}
-                        className="no-print flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-sm font-semibold transition-colors border border-amber-200 shadow-sm"
-                    >
-                        <Download size={15} />
-                        Download PDF
-                    </button>
-                </div>
-                <p className="text-sm text-gray-400 mb-8">
-                    {loanType === 'personal' ? 'Personal Loan' : 'Business Loan'} · Assessed {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </p>
-
-                {/* ── Score Gauge ── */}
-                <div className="card mb-6 flex flex-col items-center py-8">
-                    <ScoreGauge score={score} />
-                    <p className="text-sm text-gray-500 mt-4 text-center max-w-xs">
-                        Your profile scores <strong style={{ color: mainColor }}>{score}/100</strong> based on our real-approval AI model.
-                    </p>
-                </div>
-
-                {/* ── Key Metrics ── */}
-                <div className="card mb-6">
-                    <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                        <span className="text-gold">📊</span> Key Metrics
-                    </h2>
-                    <div className="space-y-2">
-                        {loanType === 'personal' ? (
-                            <>
-                                <MetricRow
-                                    label="CIBIL Score"
-                                    value={metrics.cibil}
-                                    status={metrics.cibil >= 750 ? 'green' : metrics.cibil >= 680 ? 'amber' : 'red'}
-                                    note="Min. 700 for most banks"
-                                />
-                                <MetricRow
-                                    label="FOIR (debt burden)"
-                                    value={fmtPct(foir)}
-                                    status={foirStatus(foir)}
-                                    note="Below 40% is ideal"
-                                />
-                                <MetricRow
-                                    label="Monthly Income"
-                                    value={fmtINR(metrics.monthlyIncome)}
-                                    status={metrics.monthlyIncome >= 30000 ? 'green' : metrics.monthlyIncome >= 15000 ? 'amber' : 'red'}
-                                />
-                                <MetricRow
-                                    label="Employment Type"
-                                    value={metrics.employmentType || '—'}
-                                    status={['Salaried', 'Professional / Doctor'].includes(metrics.employmentType) ? 'green' : 'amber'}
-                                />
-                                <MetricRow
-                                    label="Employer Tenure"
-                                    value={`${metrics.yearsAtEmployer || 0} yr(s)`}
-                                    status={metrics.yearsAtEmployer >= 2 ? 'green' : metrics.yearsAtEmployer >= 1 ? 'amber' : 'red'}
-                                    note="Min. 1 year preferred"
-                                />
-                                <MetricRow
-                                    label="Loan Amount"
-                                    value={fmtINR(metrics.loanAmount)}
-                                    status={metrics.loanAmount <= metrics.monthlyIncome * 20 ? 'green' : metrics.loanAmount <= metrics.monthlyIncome * 36 ? 'amber' : 'red'}
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <MetricRow
-                                    label="Promoter CIBIL"
-                                    value={metrics.cibilScore}
-                                    status={metrics.cibilScore >= 720 ? 'green' : metrics.cibilScore >= 680 ? 'amber' : 'red'}
-                                />
-                                <MetricRow
-                                    label="DSCR"
-                                    value={dscr != null ? dscr.toFixed(2) : '—'}
-                                    status={dscrStatus(dscr)}
-                                    note="Target ≥ 1.25"
-                                />
-                                <MetricRow
-                                    label="Annual Turnover"
-                                    value={fmtINR(metrics.annualTurnover)}
-                                    status={metrics.annualTurnover >= 2000000 ? 'green' : metrics.annualTurnover >= 500000 ? 'amber' : 'red'}
-                                />
-                                <MetricRow
-                                    label="Business Vintage"
-                                    value={`${metrics.yearsInBusiness || 0} yr(s)`}
-                                    status={metrics.yearsInBusiness >= 3 ? 'green' : metrics.yearsInBusiness >= 2 ? 'amber' : 'red'}
-                                />
-                                <MetricRow
-                                    label="Loan Amount"
-                                    value={fmtINR(metrics.loanAmount)}
-                                    status={metrics.loanAmount <= metrics.annualTurnover * 0.5 ? 'green' : metrics.loanAmount <= metrics.annualTurnover * 0.7 ? 'amber' : 'red'}
-                                />
-                            </>
+        <div className={`dark ${inlineData ? "w-full pb-10 mt-8 border-t border-white/10 pt-8" : "min-h-screen bg-[#0A0A0A] text-white flex flex-col"}`}>
+            {!inlineData && <Navbar />}
+            <main className={`flex-1 mx-auto w-full px-4 sm:px-6 ${inlineData ? "fade-in" : "max-w-7xl pt-24 pb-10 fade-in"}`}>
+                
+                {/* Header Row */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Eligibility Decision Board</h1>
+                        <p className="text-sm text-gray-400 mt-1">
+                            {loanType === 'personal' ? 'Personal Loan' : 'Business Loan'} Assessed on {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {inlineData && onReset && (
+                            <button
+                                onClick={onReset}
+                                className="px-4 py-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl text-sm font-semibold transition-colors"
+                            >
+                                New Analysis
+                            </button>
                         )}
+                        <button
+                            onClick={() => generatePDFReport({
+                                loanType, score, metrics, sessionId,
+                                bankRecs, improvements,
+                                foir: foir,
+                                dscr: dscr,
+                            })}
+                            className="no-print flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                        >
+                            <Download size={16} />
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+
+                {/* ── Two Column Bank Dashboard Layout ── */}
+                <div className="grid lg:grid-cols-12 gap-8 mb-12">
+                    
+                    {/* LEFT COLUMN (40%) Summary & Visualization */}
+                    <div className="lg:col-span-5 space-y-6">
+                        
+                        {/* Overall Score Card */}
+                        <div className="p-6 bg-[#111111] rounded-2xl border border-white/10 shadow-lg shadow-black/40">
+                            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Overall Score</h2>
+                            <div className="flex items-end gap-3">
+                                <span className="text-6xl font-bold leading-none" style={{ color: mainColor }}>{score}</span>
+                                <span className="text-xl text-gray-500 font-medium pb-1.5">/ 100</span>
+                            </div>
+                            <div className="w-full bg-gray-800 rounded-full h-1.5 mt-6">
+                                <div className="h-1.5 rounded-full transition-all duration-1000" style={{ width: `${score}%`, backgroundColor: mainColor }} />
+                            </div>
+                        </div>
+
+                        {/* Radar Chart */}
+                        <div className="p-6 bg-[#111111] rounded-2xl border border-white/10 shadow-lg shadow-black/40">
+                            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Core Credit Factors</h2>
+                            <div className="h-[260px] w-full" style={{ marginLeft: '-15px' }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                                        <PolarGrid stroke="#333" />
+                                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#888', fontSize: 11 }} />
+                                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                                        <Radar name="Profile" dataKey="A" stroke={mainColor} fill={mainColor} fillOpacity={0.25} />
+                                    </RadarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Banker's View Note (AI Generated) */}
+                        <div className="p-6 bg-gradient-to-br from-indigo-950/30 to-black rounded-2xl border border-indigo-900/40 shadow-lg shadow-black/40 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4 opacity-10">
+                                <Building2 size={64} />
+                            </div>
+                            <h2 className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-2 relative z-10">
+                                <Info size={14} /> Underwriter's View
+                            </h2>
+                            <p className="text-sm text-gray-300 leading-relaxed font-medium relative z-10">
+                                {bankerComment}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* RIGHT COLUMN (60%) Detailed Breakdown */}
+                    <div className="lg:col-span-7">
+                        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Detailed Breakdown</h2>
+                        <div className="space-y-4">
+                            {detailedMetrics.map((m, i) => (
+                                <motion.div 
+                                    key={m.title}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-5 bg-[#111111] rounded-2xl border border-white/10 shadow-lg shadow-black/40 flex flex-col sm:flex-row sm:items-start md:items-center gap-5"
+                                >
+                                    <div className="h-14 w-14 shrink-0 rounded-full flex items-center justify-center font-bold text-lg border-[3px]" 
+                                        style={{ 
+                                            borderColor: `${scoreColor(m.score)}40`, 
+                                            color: scoreColor(m.score),
+                                            backgroundColor: `${scoreColor(m.score)}15`
+                                        }}>
+                                        {m.score}
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <h3 className="font-bold text-gray-200">{m.title}</h3>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mb-2.5">Determined by: <span className="text-gray-400">{m.basedOn}</span></p>
+                                        <div className="flex items-start gap-2 bg-[#1A1A1A] p-3 rounded-xl border border-white/5">
+                                            <Lightbulb size={14} className="mt-0.5 shrink-0 text-amber-500" />
+                                            <p className="text-sm text-gray-300 leading-tight">{m.suggestion}</p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -506,7 +593,7 @@ export default function Results() {
                     summary: `This user applied for a ${loanType} loan and scored ${score}/100 on Veritas AI's eligibility checker.`,
                 }} />
             </main>
-            <MobileBottomNav />
+            {!inlineData && <MobileBottomNav />}
         </div>
     )
 }
