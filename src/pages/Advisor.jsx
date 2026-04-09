@@ -53,9 +53,15 @@ export default function Advisor() {
         setLoading(true)
 
         try {
-            const { data: { session } } = await supabase.auth.getSession()
-            
-            // Format history for the API (exclude the system-like greeting if needed, or send it)
+            // Always use the anon key as a safe fallback — the function is public-accessible
+            const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+            let authToken = ANON_KEY
+            try {
+                const { data: { session } } = await supabase.auth.getSession()
+                if (session?.access_token) authToken = session.access_token
+            } catch (_) { /* use anon key */ }
+
+            // Format history for the API
             const chatHistory = newMessages.slice(1, -1).map(m => ({
                 role: m.role,
                 content: m.content
@@ -65,7 +71,7 @@ export default function Advisor() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY}`
+                    'Authorization': `Bearer ${authToken}`
                 },
                 body: JSON.stringify({
                     message: userMsg,
@@ -74,14 +80,17 @@ export default function Advisor() {
                 })
             })
 
-            const data = await res.json()
-            
-            if (!res.ok) throw new Error(data.error || 'Failed to get response')
+            const rawText = await res.text()
+            let data
+            try { data = JSON.parse(rawText) } catch (_) { throw new Error(`Server returned non-JSON: ${rawText.slice(0, 200)}`) }
+
+            if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`)
+            if (!data?.response) throw new Error(`Empty response from server: ${JSON.stringify(data)}`)
 
             setMessages([...newMessages, { role: 'assistant', content: data.response }])
         } catch (err) {
             console.error('Advisor error:', err)
-            setMessages([...newMessages, { role: 'assistant', content: "⚠️ Sorry, I encountered an error analyzing your data. Please try again." }])
+            setMessages([...newMessages, { role: 'assistant', content: `⚠️ Error: ${err.message}` }])
         } finally {
             setLoading(false)
         }
