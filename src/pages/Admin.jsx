@@ -69,7 +69,7 @@ export default function Admin() {
 
     if (!authed) {
         return (
-            <div className="min-h-screen bg-cream flex flex-col">
+            <div className="min-h-screen bg-cream dark:bg-void flex flex-col">
                 <Navbar />
                 <main className="flex-1 flex items-center justify-center p-6">
                     <div className="card w-full max-w-sm">
@@ -100,7 +100,7 @@ export default function Admin() {
     }
 
     return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-screen bg-cream dark:bg-void flex flex-col">
             <Navbar />
             <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 <div className="flex items-center gap-3 mb-8">

@@ -51,7 +51,7 @@ export default function Auth() {
     }
 
     return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-screen bg-cream dark:bg-void flex flex-col">
             <Navbar />
             <main className="flex-1 max-w-md mx-auto w-full px-4 sm:px-6 pt-24 pb-16 fade-in">
                 <div className="card p-8">

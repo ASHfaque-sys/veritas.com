@@ -207,7 +207,7 @@ export default function BusinessLoan() {
     if (loading) return <LoadingScreen onComplete={handleAnalysisComplete} />
 
     return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-screen bg-cream dark:bg-void flex flex-col">
             <Navbar />
             <main className={`flex-1 mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in ${activeTab === 'apply' ? 'max-w-2xl' : 'max-w-6xl'}`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">

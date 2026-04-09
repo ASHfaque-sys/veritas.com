@@ -23,7 +23,7 @@ export default function LoadingScreen({ onComplete }) {
     }, [current, onComplete])
 
     return (
-        <div className="min-h-screen bg-cream flex flex-col items-center justify-center px-4">
+        <div className="min-h-screen bg-cream dark:bg-void flex flex-col items-center justify-center px-4">
             <div className="w-full max-w-sm">
                 {/* Logo / Title */}
                 <div className="text-center mb-10">

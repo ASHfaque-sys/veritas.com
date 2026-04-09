@@ -108,7 +108,7 @@ export default function PersonalLoan() {
     if (loading) return <LoadingScreen onComplete={handleAnalysisComplete} />
 
     return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-screen bg-cream dark:bg-void flex flex-col">
             <Navbar />
             <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 fade-in">
                 {/* Back */}
