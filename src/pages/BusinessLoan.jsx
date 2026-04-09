@@ -178,7 +178,7 @@ export default function BusinessLoan() {
 
             setAnalysisResult({
                 loanType: 'business',
-                score,
+                score: score.score,
                 sessionId: sessionData?.session_id,
                 loanTypeChosen: activeLoanType,
                 hasGstReturns: !!gstReturns,
