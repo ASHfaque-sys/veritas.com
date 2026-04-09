@@ -8,7 +8,7 @@ import { ChevronLeft, AlertCircle, Info } from 'lucide-react'
 import { scoreBusinessLoan } from '../utils/scoring'
 import { analyseDocument, saveAssessment } from '../utils/api'
 import BusinessIntelligenceDashboard from '../components/business/BusinessIntelligenceDashboard'
-
+import Results from './Results'
 const LOAN_TYPES = [
     {
         id: 'psb-59',
