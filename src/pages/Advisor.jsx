@@ -135,7 +135,7 @@ export default function Advisor() {
                                         <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                                     ) : (
                                         <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-li:my-0.5">
-                                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                            <ReactMarkdown>{msg.content.replace(/<(?=\s|\d)/g, '&lt;')}</ReactMarkdown>
                                         </div>
                                     )}
                                 </div>
