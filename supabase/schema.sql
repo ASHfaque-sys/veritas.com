@@ -1,8 +1,3 @@
--- ============================================================
--- UniLoan AI — Supabase Database Schema
--- Run this in Supabase SQL Editor
--- ============================================================
-
 -- 1. Enable pgvector extension
 create extension if not exists vector;
 

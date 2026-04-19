@@ -101,7 +101,8 @@ export default function PersonalLoan() {
             })
             setLoading(false)
         } catch (e) {
-            setError('Analysis failed. Please try again.')
+            console.error('Submission Error:', e)
+            setError(e.message || 'Analysis failed. Please try again.')
             setLoading(false)
         }
     }
