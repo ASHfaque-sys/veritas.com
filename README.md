@@ -1,4 +1,4 @@
-# UniLoan AI
+# Veritas AI
 
 > AI-powered loan eligibility checker for Indian consumers — Personal & Business Loans
 
