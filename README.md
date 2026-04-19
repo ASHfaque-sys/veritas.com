@@ -52,7 +52,18 @@ supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 supabase functions deploy analyse-loan
 ```
 
-### 6. Run locally
+### 6. Load Kaggle Real-World Dataset (Optional)
+To test the AI `pgvector` similarity matching against realistic data:
+1. Ensure your `.env` is configured with Supabase credentials.
+2. Run the provided Python ETL pipeline:
+```bash
+cd python
+pip install pandas requests python-dotenv
+python import_kaggle_data.py
+```
+This script cleanly translates Kaggle's "Loan Approval Prediction" dataset into matching JSON schemas, generates mathematical embeddings, and securely pushes them directly to your Supabase cloud via the REST API.
+
+### 7. Run locally
 ```bash
 npm run dev
 ```
